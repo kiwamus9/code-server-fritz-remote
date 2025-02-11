@@ -1,0 +1,11 @@
+1．
+vite.configのpluginでtailwind（4．0）を入れてもうまく動かないので
+postcssを使用する
+
+2．
+vite-kotolinのconfigが全然足りないので，vite.config.templ.jsを
+必要な場所にコピーするんだけど．
+templの中に一行コメント「//」が入るとテンプレートローダがエラーを吐く．．
+
+3.
+https://telehakke.github.io/tailwindcss-japanese-cheat-sheet-v4/

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ title }}</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    {% block body %}{% endblock %}
+  </body>
+  <script>
+    const  websocket  = new WebSocket("ws://localhost:5173/codeServer2/guu")
+    websocket.addEventListener("open", (event) => {
+      console.log("connect")
+      websocket.send("Hello world")
+    });
+  </script>
+</html>
