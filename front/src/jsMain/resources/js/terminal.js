@@ -42,6 +42,7 @@ export function initTerminal(terminalParent) {
     socket?.on('tty', (data) => {
         terminal.write(data)
     })
+    return terminal
 }
 
 function resize() {

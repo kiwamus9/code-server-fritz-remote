@@ -19,6 +19,8 @@ import {basicSetup} from "codemirror";
 //     return "hoee"
 // }
 
+
+
 export function createState(doc) {
     return EditorState.create({
         doc: doc, // 初期値を指定

@@ -9,6 +9,5 @@ external class FitAddon {
     fun fit():Unit
 }
 
-
-external fun initTerminal(terminalParent: HTMLElement): Unit
+external fun initTerminal(terminalParent: HTMLElement): dynamic
 external val fitAddon: FitAddon
