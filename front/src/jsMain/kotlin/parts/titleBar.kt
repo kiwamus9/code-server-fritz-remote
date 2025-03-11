@@ -1,4 +1,5 @@
 @file:Suppress("PackageDirectoryMismatch")
+
 package parts.titleBar
 
 import dev.fritz2.core.HtmlTag
@@ -16,9 +17,13 @@ fun RenderContext.titleBar(
     centerDivContent: RenderContext.() -> Unit,
     rightDivContent: RenderContext.() -> Unit
 ) {
-    div("w-full h-auto min-h-[2.3em] shrink-0 flex flex-row justify-between bg-blue-300 " + (baseClass ?: titleBarClass), id) {
-        leftPane = div("flex items-center") {leftDivContent()}
-        centerPane = div("flex items-center") {centerDivContent()}
-        rightPane = div("flex items-center") {rightDivContent()}
+    //div("w-full h-auto min-h-[2.3em] shrink-0 flex flex-row justify-between bg-blue-300 " + (baseClass ?: titleBarClass), id) {
+    div(
+        "w-full h-auto h-min-[33px] shrink-0 flex flex-row justify-between bg-blue-300 " + (baseClass
+            ?: titleBarClass), id
+    ) {
+        leftPane = div("flex items-center") { leftDivContent() }
+        centerPane = div("flex items-center") { centerDivContent() }
+        rightPane = div("flex items-center") { rightDivContent() }
     }
 }

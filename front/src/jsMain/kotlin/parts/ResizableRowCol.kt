@@ -34,10 +34,10 @@ sealed class Message {
 
 class ResizableRowCol(
     val type: ResizableRowColType, val baseClass: String? = null, val id: String? = null,
-    val borderWidth: Int = 4,
+    val borderWidth: Int = 5,
     val initialContent1Size: String? = null,
-    val divBaseClass1: String? = null,
-    val divBaseClass2: String? = null,
+    var divBaseClass1: String? = null,
+    var divBaseClass2: String? = null,
     val divContent1: RenderContext.() -> Unit,
     val divContent2: RenderContext.() -> Unit
 ) {
@@ -62,6 +62,7 @@ class ResizableRowCol(
                 borderPos = "r"
                 borderStyle = "border-right-width: ${borderWidth}px;"
                 initFlexBasis = " flex-basis: ${initialContent1Size};"
+                divBaseClass1 = " overflow-auto "
             }
 
             Col -> {
@@ -70,6 +71,7 @@ class ResizableRowCol(
                 borderPos = "b"
                 borderStyle = "border-bottom-width: ${borderWidth}px;"
                 initFlexBasis = " flex-basis: ${initialContent1Size};"
+                divBaseClass2 += " min-h-[100px]"
             }
         }
     }
@@ -118,7 +120,7 @@ fun RenderContext.resizableColRow(
     lateinit var content1Pane: HtmlTag<HTMLDivElement>
     lateinit var content2Pane: HtmlTag<HTMLDivElement>
 
-    allPane = div("w-full h-full flex ${setting.flexDirection} ${setting.baseClass ?: ""}", setting.id) {
+    allPane = div("h-[100%] w-[100%] flex ${setting.flexDirection} ${setting.baseClass ?: ""}", setting.id) {
         setting.modelStore.data.exec(job) { modelStore ->
             when (val state = modelStore.state) {
                 is ModelState.Dragging -> {
@@ -158,7 +160,7 @@ fun RenderContext.resizableColRow(
 //            div("dark:border-zinc-600 border-zinc-200 border-b-4") {
                 (setting.divContent1)()
             }
-        content2Pane = div("bg-gray-300 grow-1 shrink-1 ${setting.divBaseClass2 ?: ""}") {
+        content2Pane = div("bg-gray-300 grow-1 shrink-1 min-w-[150px] ${setting.divBaseClass2 ?: ""}") {
             (setting.divContent2)()
         }
     }.apply {

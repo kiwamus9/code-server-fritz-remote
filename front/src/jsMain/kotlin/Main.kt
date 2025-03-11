@@ -28,17 +28,18 @@ fun main() {
         data class Model(val state: ModelState, val isDragging: Boolean = false)
 
         val rootModelStore = object : RootStore<Model>(Model(ModelState.Init), job = Job()) {}
-
-        resizableCol(
-            initialUpperHeight = "50%",
-            upperDivContent = { editorPane() },
-            lowerDivContent = {
-                resizableRow(
-                    //initialLeftWidth = "25%",
-                    leftDivContent = { fileListPane() },
-                    //rightDivBaseClass = "flex flex-col",
-                    rightDicContent = { terminalPane() }
-                )
-            })
+        main("flex overflow-visible") {
+            resizableCol(
+                initialUpperHeight = "600px",
+                upperDivContent = { editorPane() },
+                lowerDivContent = {
+                    resizableRow(
+                        initialLeftWidth = "200px",
+                        leftDivContent = { fileListPane() },
+                        // rightDivBaseClass = "flex flex-col",
+                        rightDicContent = { terminalPane() }
+                    )
+                })
+        }
     }
 }

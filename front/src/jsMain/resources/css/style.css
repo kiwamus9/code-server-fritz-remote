@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
-#xterm-screen {
+.xterm-screen {
     width: 100%;
     height: 100%;
+    resize: both;
+    overflow: hidden;
 }
 

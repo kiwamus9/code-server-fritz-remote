@@ -1,8 +1,6 @@
 import {Terminal} from '@xterm/xterm'
 import {FitAddon} from '@xterm/addon-fit'
-import {io, Socket} from "socket.io-client"
-import {ITerminalOptions} from "@xterm/xterm";
-
+import {io} from "socket.io-client"
 
 let socket = io({path: "/codeServer2/ws/"})
 
@@ -13,12 +11,12 @@ let options= {
 }
 
 let terminal= new Terminal(options)
-let fitAddon= new FitAddon()
+export let fitAddon= new FitAddon()
 
 let userName = "kiwamu"
 
 export function initTerminal(terminalParent) {
-    window.addEventListener('resize', resize)
+    // window.addEventListener('resize', resize)
     terminal.loadAddon(fitAddon)
     terminal.open(terminalParent);
     terminal.resize(10, 10)
