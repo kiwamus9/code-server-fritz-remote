@@ -10,4 +10,5 @@ external class FitAddon {
 }
 
 external fun initTerminal(terminalParent: HTMLElement): dynamic
+external fun resizeTerminal()
 external val fitAddon: FitAddon

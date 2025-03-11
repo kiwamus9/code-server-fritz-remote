@@ -5,7 +5,6 @@ package parts.terminalPane
 import afterMountElem
 import buttonClass
 import dev.fritz2.core.RenderContext
-import dev.fritz2.core.afterMount
 import dev.fritz2.core.autocomplete
 import dev.fritz2.core.beforeUnmount
 import dev.fritz2.core.placeholder
@@ -13,13 +12,11 @@ import dev.fritz2.core.type
 import external.fitAddon
 import external.initTerminal
 import external.ResizeObserver
+import external.resizeTerminal
 import inputTextClass
 import org.w3c.dom.HTMLElement
-import org.w3c.dom.Node
-import org.w3c.dom.ResizeQuality
 import parts.titleBar.titleBar
 import pasteButtonClass
-import kotlin.math.log
 
 var terminalDynamic: dynamic? = null
 lateinit var observer: ResizeObserver
@@ -87,17 +84,22 @@ fun RenderContext.terminalPane(baseClass: String? = null, id: String? = null) {
                 }
             }
         )
-        div("grow-1 shrink-1 h-[100%] w-[100%] ", id = "terminalParent") {
+        div("grow-1 shrink-1 min-h-[100px] w-[100%] bg-black", id = "terminalParent") {
             afterMountElem { withDom, _ ->
                 console.log("afterMount")
-
                 terminalDynamic = initTerminal(withDom.domNode as HTMLElement)
+
+                observer = ResizeObserver { entries, _ ->
+//                    console.log(entries[0].borderBoxSize[0].blockSize.toString())
+//                    console.log(entries[0].borderBoxSize[0].inlineSize)
+                    resizeTerminal()
+                }
+                observer.observe(withDom.domNode)
 
             }
             beforeUnmount { withDom, _ ->
-
+                observer.unobserve(withDom.domNode)
                 console.log("beforeUnmount")
-
             }
         }
     }

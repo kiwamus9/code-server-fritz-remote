@@ -4,17 +4,17 @@ import org.w3c.dom.DOMRectReadOnly
 import org.w3c.dom.MutationObserver
 import org.w3c.dom.Node
 
-
-interface SizeRefer {
-    val blockSize: Int
-    val inlineSize: Int
+//{inlineSize: 672.984375, blockSize: 362}
+external interface SizeRefer {
+    val blockSize: Number
+    val inlineSize: Number
 }
 external interface ResizeObserverEntry{
-    val borderBoxSize: SizeRefer
+    val borderBoxSize: Array<SizeRefer>
     // 読取専用
     // コールバックが実行されたときに監視された要素の新しい境界ボックスサイズを含むオブジェクトの配列です。
 
-    val contentBoxSize: SizeRefer
+    val contentBoxSize: Array<SizeRefer>
     // 読取専用
     // コールバックが実行されたときに監視された要素の新しいコンテンツボックスサイズを含むオブジェクトの配列です。
 
