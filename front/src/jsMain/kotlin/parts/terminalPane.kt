@@ -12,13 +12,18 @@ import dev.fritz2.core.placeholder
 import dev.fritz2.core.type
 import external.fitAddon
 import external.initTerminal
+import external.ResizeObserver
 import inputTextClass
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.Node
+import org.w3c.dom.ResizeQuality
 import parts.titleBar.titleBar
 import pasteButtonClass
-
+import kotlin.math.log
 
 var terminalDynamic: dynamic? = null
+lateinit var observer: ResizeObserver
+
 
 fun RenderContext.terminalPane(baseClass: String? = null, id: String? = null) {
     div("flex flex-col w-[100%] h-[100%]") {
@@ -75,7 +80,7 @@ fun RenderContext.terminalPane(baseClass: String? = null, id: String? = null) {
                         }
                         input(inputTextClass) {
                             type("text")
-                            placeholder("paste文字列5")
+                            placeholder("paste文字列4")
                             autocomplete("true")
                         }
                     }
