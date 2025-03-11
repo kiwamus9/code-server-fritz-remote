@@ -5,7 +5,9 @@ package parts.terminalPane
 import afterMountElem
 import buttonClass
 import dev.fritz2.core.RenderContext
+import dev.fritz2.core.afterMount
 import dev.fritz2.core.autocomplete
+import dev.fritz2.core.beforeUnmount
 import dev.fritz2.core.placeholder
 import dev.fritz2.core.type
 import external.fitAddon
@@ -15,6 +17,8 @@ import org.w3c.dom.HTMLElement
 import parts.titleBar.titleBar
 import pasteButtonClass
 
+
+var terminalDynamic: dynamic? = null
 
 fun RenderContext.terminalPane(baseClass: String? = null, id: String? = null) {
     div("flex flex-col w-[100%] h-[100%]") {
@@ -71,7 +75,7 @@ fun RenderContext.terminalPane(baseClass: String? = null, id: String? = null) {
                         }
                         input(inputTextClass) {
                             type("text")
-                            placeholder("paste文字列4")
+                            placeholder("paste文字列5")
                             autocomplete("true")
                         }
                     }
@@ -79,7 +83,18 @@ fun RenderContext.terminalPane(baseClass: String? = null, id: String? = null) {
             }
         )
         div("grow-1 shrink-1 h-[100%] w-[100%] ", id = "terminalParent") {
-        }.afterMountElem { withDom, _ -> initTerminal(withDom.domNode as HTMLElement) }
+            afterMountElem { withDom, _ ->
+                console.log("afterMount")
+
+                terminalDynamic = initTerminal(withDom.domNode as HTMLElement)
+
+            }
+            beforeUnmount { withDom, _ ->
+
+                console.log("beforeUnmount")
+
+            }
+        }
     }
 }
 

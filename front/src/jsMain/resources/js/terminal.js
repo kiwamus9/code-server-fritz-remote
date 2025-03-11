@@ -5,13 +5,13 @@ import {io} from "socket.io-client"
 let socket = io({path: "/codeServer2/ws/"})
 
 
-let options= {
+let options = {
     cursorBlink: true, fontSize: 14,
     lineHeight: 1.2
 }
 
-let terminal= new Terminal(options)
-export let fitAddon= new FitAddon()
+let terminal = new Terminal(options)
+export let fitAddon = new FitAddon()
 
 let userName = "kiwamu"
 
@@ -42,11 +42,13 @@ export function initTerminal(terminalParent) {
     socket?.on('tty', (data) => {
         terminal.write(data)
     })
+
+    return terminal
 }
 
 function resize() {
     fitAddon.fit()
     socket?.emit("resize", {
         userName: userName, "cols": terminal.cols, "rows": terminal.rows
-})
+    })
 }

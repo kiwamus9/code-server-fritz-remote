@@ -90,7 +90,7 @@ io.on('connection', (socket) => {
         console.log('user disconnected')
         // const ps = socket.data["ptyProcess"]
         // console.dir(ptyProcess.pid)
-        socket.data["ptyProcess"].kill("SIGKILL")
+        socket.data["ptyProcess"]?.kill("SIGKILL")
         // console.dir(ptyProcess)
     })
 });

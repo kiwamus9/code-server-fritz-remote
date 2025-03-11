@@ -10,5 +10,5 @@ external class FitAddon {
 }
 
 
-external fun initTerminal(terminalParent: HTMLElement): Unit
+external fun initTerminal(terminalParent: HTMLElement): dynamic
 external val fitAddon: FitAddon
