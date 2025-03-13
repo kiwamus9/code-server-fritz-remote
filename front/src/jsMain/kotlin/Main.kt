@@ -1,9 +1,9 @@
-import dev.fritz2.core.RootStore
+import dev.fritz2.core.d
+import dev.fritz2.core.fill
 import dev.fritz2.core.render
+import dev.fritz2.core.viewBox
 import kotlinx.browser.window
-import kotlinx.coroutines.Job
 import org.w3c.dom.url.URL
-import org.w3c.dom.url.URLSearchParams
 import parts.editorPane.editorPane
 import parts.fileListPane.fileListPane
 import parts.resizableRowCol.resizableCol

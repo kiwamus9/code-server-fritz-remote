@@ -2,7 +2,6 @@ import express from 'express'
 import {__workspaces} from "../app";
 import path from "path"
 import * as fs_p from "node:fs/promises"
-import * as fs from "node:fs"
 import * as os from "node:os";
 
 const router = express.Router();

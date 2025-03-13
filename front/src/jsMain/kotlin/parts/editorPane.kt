@@ -7,7 +7,6 @@ import buttonClass
 import external.createEditorView
 import external.createState
 import dev.fritz2.core.RenderContext
-import dev.fritz2.core.textContent
 import org.w3c.dom.HTMLDivElement
 import parts.titleBar.titleBar
 
