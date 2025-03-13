@@ -1,43 +1,27 @@
 import dev.fritz2.core.RootStore
 import dev.fritz2.core.render
+import kotlinx.browser.window
 import kotlinx.coroutines.Job
+import org.w3c.dom.url.URL
+import org.w3c.dom.url.URLSearchParams
 import parts.editorPane.editorPane
 import parts.fileListPane.fileListPane
 import parts.resizableRowCol.resizableCol
 import parts.resizableRowCol.resizableRow
 import parts.terminalPane.terminalPane
 
-
-sealed class ModelState {
-    object Init : ModelState()
-    object UserSelected : ModelState()
-    object StudentSelected : ModelState()
-    object FileSelected : ModelState()
-}
-
-sealed class Message {
-    data class MouseMoving(val point: Point) : Message()
-    data class MouseDownOnBorder(val point: Point) : Message()
-    object MouseOnBorder : Message()
-    object MouseReleased : Message()
-}
-
 fun main() {
-
+    val userName = URL(window.location.href).searchParams.get("userName")
     render("#target") {
-        data class Model(val state: ModelState, val isDragging: Boolean = false)
-
-        val rootModelStore = object : RootStore<Model>(Model(ModelState.Init), job = Job()) {}
         main("flex overflow-visible") {
             resizableCol(
                 initialUpperHeight = "600px",
-                upperDivContent = { editorPane() },
+                upperDivContent = { editorPane(userName = userName) },
                 lowerDivContent = {
                     resizableRow(
                         initialLeftWidth = "200px",
-                        leftDivContent = { fileListPane() },
-                        // rightDivBaseClass = "flex flex-col",
-                        rightDicContent = { terminalPane() }
+                        leftDivContent = { fileListPane(userName = userName) },
+                        rightDicContent = { terminalPane(userName = userName) }
                     )
                 })
         }

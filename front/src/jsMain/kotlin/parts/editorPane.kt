@@ -18,7 +18,7 @@ sealed class ModelState {
     object Changed : ModelState()
 }
 
-fun RenderContext.editorPane(baseClass: String? = null, id: String? = null) {
+fun RenderContext.editorPane(baseClass: String? = null, id: String? = null, userName: String? = null) {
 
     val state = createState("kiwamu")
 

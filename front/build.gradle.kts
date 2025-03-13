@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.ksp)
     alias(libs.plugins.vite.kotlin)
+    alias(libs.plugins.serialization)
 }
 //	//
 ////	alias(libs.plugins.kotlin.multiplatform)
@@ -40,11 +41,15 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.fritz2.core)
+                implementation(libs.kotlinx.serialization.json)
+                implementation(libs.fritz2.serialization)
                 // implementation("dev.fritz2:headless:$fritz2Version") // optional headless comp
             }
         }
         jsMain {
             dependencies {
+
+
 //                implementation(npm("@codemirror/state", "6.4.1"))
 //                implementation(npm("@codemirror/view", "6.35.0"))
 //                implementation(npm("@codemirror/command", "6.7.1"))
@@ -78,7 +83,7 @@ tasks.named("viteRun") {
             expand(
                 Pair("base", viteConfig.base.get()),
                 Pair("outDir", viteConfig.build.outDir.get()),
-                )
+            )
             rename("vite.config.templ.js", "vite.config.js")
         }
     }

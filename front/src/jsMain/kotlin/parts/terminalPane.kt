@@ -22,7 +22,7 @@ var terminalDynamic: dynamic? = null
 lateinit var observer: ResizeObserver
 
 
-fun RenderContext.terminalPane(baseClass: String? = null, id: String? = null) {
+fun RenderContext.terminalPane(baseClass: String? = null, id: String? = null, userName: String? = null) {
     div("flex flex-col w-[100%] h-[100%]") {
         titleBar(
             leftDivContent = {

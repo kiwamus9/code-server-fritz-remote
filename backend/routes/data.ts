@@ -31,7 +31,7 @@ router.put('/workspace/file/',
         //res.sendFile(filePath)
         fs_p.writeFile(filePath, req.body.join(os.EOL), "utf8").then(_ => {
             res.status(200).send("write success")
-        }).catch( _=> {
+        }).catch(_ => {
             res.status(500).send("write failed")
         })
     });
@@ -43,13 +43,16 @@ router.get('/workspace/user/:userName',
            _next) => {
         const userWorkspacePath = path.join(__workspaces, req.params.userName)
         //const isExist =  await fs_p.stat(userWorkspacePath)
-        const direntLists: fs.Dirent[] =
-            await fs_p.readdir(userWorkspacePath, {withFileTypes: true, recursive: true})
-        const fileLists = direntLists.map(dirent => {
-            const relativePath = path.relative(userWorkspacePath, dirent.parentPath)
-            return {name: dirent.name, path: relativePath, isDirectory: dirent.isDirectory()}
+        fs_p.readdir(userWorkspacePath, {withFileTypes: true, recursive: true}).then(direntLists => {
+            const fileLists = direntLists.map(dirent => {
+                const relativePath = path.relative(userWorkspacePath, dirent.parentPath)
+                return {name: dirent.name, path: relativePath, isDirectory: dirent.isDirectory()}
+            })
+            res.json({"workspace": userWorkspacePath, "fileLists": fileLists})
+        }).catch(err => {
+            res.status(404).send(err.message)
         })
-        res.json({"workspace": __workspaces, "fileLists": fileLists});
-    });
+    })
+
 
 export default router;

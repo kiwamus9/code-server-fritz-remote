@@ -2,26 +2,33 @@
 
 package parts.fileListPane
 
-import Point
 import buttonClass
 import dev.fritz2.core.RenderContext
 import dev.fritz2.core.RootStore
+import dev.fritz2.remote.decoded
 import dev.fritz2.remote.http
 import kotlinx.coroutines.Job
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
+import parts.fileListPane.ModelState.*
 import parts.titleBar.titleBar
 
 sealed class ModelState {
-    object Init : ModelState()
-    object Loading : ModelState()
+    object Init: ModelState()
+    data class Loading(val userName: String) : ModelState()
+    data class LoadError(val errorMsg: String) : ModelState()
+    data class Loaded(val userName: String) : ModelState()
     data class Selected(val select: Int) : ModelState()
 }
 
 sealed class Message {
+    data class Load(val userName: String) : Message()
     data class Select(val select: Int) : Message()
 }
 
-fun loadFileLists(userName: String) {
-//    http("/codeServer2/data/workspace/user/${it}")
+//suspend fun loadFileLists(userName: String) {
+//    val workspace = http("/codeServer2/data/workspace/user").acceptJson().contentType("application/json")
+//    console.log(workspace.get(userName))
 //    axiosClient.get(`/codeServer2/data/workspace/user/${it}`).then(
 //        res => {
 //        workSpaceStore.set(res.data.workspace)
@@ -48,12 +55,47 @@ fun loadFileLists(userName: String) {
 //
 //        fileList = flatten(fileEntries)
 //    })
-}
+//}
 
-fun RenderContext.fileListPane(baseClass: String? = null, id: String? = null) {
-    data class Model(val state: ModelState, val fileList: List<String>)
+@Serializable
+data class FileAttr(val name: String, val path: String, val isDirectory: Boolean)
 
-    val modelStore = object : RootStore<Model>(Model(ModelState.Init, emptyList()), job = Job()) {}
+@Serializable
+data class Files2(val workspace: String, val fileLists: List<FileAttr>)
+
+data class Model(val state: ModelState, val fileList: List<FileAttr>)
+
+@OptIn(ExperimentalSerializationApi::class)
+fun RenderContext.fileListPane(baseClass: String? = null, id: String? = null, userName: String? = null) {
+
+    val modelStore = object : RootStore<Model>(Model(ModelState.Init, emptyList()), job = Job()) {
+        val load = handle<String> { _ , name->
+            val workspace = http("/codeServer2/data/workspace/user").acceptJson().contentType("application/json")
+            val resp = workspace.get(name)
+            if(resp.ok && (resp.status != 404)) {
+                //console.log(resp.body())
+                Model(ModelState.Loaded(name), resp.decoded<Files2>().fileLists)
+            } else {
+                Model(ModelState.LoadError(
+                    if(!resp.ok) "サーバに接続失敗" else "ユーザ名が不正"
+                ), emptyList())
+            }
+        }
+    }
+
+    fun update(msg: Message) {
+        when (msg) {
+            is Message.Load -> {
+                    modelStore.update(Model(Loading(msg.userName), emptyList()))
+                    modelStore.load(msg.userName) // Modelが変化する
+                }
+            is Message.Select -> TODO()
+        }
+    }
+
+
+    // ここからスタート
+    if(userName != null) { update(Message.Load(userName))}
 
     titleBar(
         leftDivContent = {
@@ -65,7 +107,15 @@ fun RenderContext.fileListPane(baseClass: String? = null, id: String? = null) {
         rightDivContent = {}
     )
     div {
-        +"list"
+        modelStore.data.render { model ->
+            when (model.state) {
+                is Init -> +"init"
+                is Loaded -> +"loaded"
+                is Loading -> +"loading"
+                is Selected -> +"selected"
+                is LoadError -> +"loadError"
+            }
+        }
     }
 
 }

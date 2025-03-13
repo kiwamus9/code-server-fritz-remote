@@ -3,9 +3,9 @@ kotlin-version = "2.0.21"
 ksp-version = "2.0.21-1.0.28"
 ktor-version = "3.0.3"
 logback-version = "1.4.14"
-serialization-json-version = "1.8.0"
+kotlinx-serialization-json-version = "1.7.3"
 vite-kotlin-version = "0.5.0"
-fritz2-version = "1.0-RC19.5"
+fritz2-version = "1.0-RC20"
 
 [libraries]
 ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor-version" }
@@ -14,8 +14,9 @@ logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "lo
 ktor-server-config-yaml = { module = "io.ktor:ktor-server-config-yaml", version.ref = "ktor-version" }
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor-version" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin-version" }
-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json",version.ref = "serialization-json-version" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json",version.ref = "kotlinx-serialization-json-version" }
 fritz2-core = { module = "dev.fritz2:core", version.ref = "fritz2-version"}
+fritz2-serialization = { module = "dev.fritz2:serialization", version.ref = "fritz2-version"}
 fritz2-lenses = { module = "dev.fritz2:lenses", version.ref = "fritz2-version"}
 fritz2-headless = { module = "dev.fritz2:headless", version.ref = "fritz2-version"}
 
