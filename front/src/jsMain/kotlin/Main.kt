@@ -1,7 +1,4 @@
-import dev.fritz2.core.d
-import dev.fritz2.core.fill
 import dev.fritz2.core.render
-import dev.fritz2.core.viewBox
 import kotlinx.browser.window
 import org.w3c.dom.url.URL
 import parts.editorPane.editorPane

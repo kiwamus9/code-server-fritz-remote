@@ -21,12 +21,11 @@ sealed class ModelState {
     data class Loading(val userName: String) : ModelState()
     data class LoadError(val errorMsg: String) : ModelState()
     data class Loaded(val userName: String) : ModelState()
-    data class Selected(val select: Int) : ModelState()
 }
 
 sealed class Message {
     data class Load(val userName: String) : Message()
-    data class Select(val select: Int) : Message()
+    data class Select(val select: FileEntry) : Message()
 }
 
 //suspend fun loadFileLists(userName: String) {
@@ -64,7 +63,7 @@ sealed class Message {
 data class FileAttr(val name: String, val path: String, val isDirectory: Boolean)
 
 @Serializable
-data class Files2(val workspace: String, val fileLists: List<FileAttr>)
+data class Files(val workspace: String, val fileLists: List<FileAttr>)
 
 class FileEntry(
     val name: String,
@@ -120,23 +119,7 @@ class FileEntry(
     }
 }
 
-/*
-    {"name":".vscode","path":"","isDirectory":true},
-    {"name":"2024-10-25_11:02:15","path":"","isDirectory":true},
-    {"name":"2024-10-25_11:09:35","path":"","isDirectory":true},
-    {"name":"main","path":"2024-10-25_11:09:35","isDirectory":false},
-    {"name":"main.c","path":"2024-10-25_11:09:35","isDirectory":false},
-    {"name":"main","path":"2024-10-25_11:02:15","isDirectory":false},
-    {"name":"main.c","path":"2024-10-25_11:02:15","isDirectory":false},
-    {"name":"mu","path":"2024-10-25_11:02:15","isDirectory":true},
-    {"name":"hoe.c","path":"2024-10-25_11:02:15/mu","isDirectory":false},
-    {"name":"settings.json","path":".vscode","isDirectory":false}
-*/
-
-
-
-
-data class Model(val state: ModelState, val fileList: List<FileEntry>)
+data class Model(val state: ModelState, val fileList: List<FileEntry>, val selected: FileEntry? = null)
 
 @OptIn(ExperimentalSerializationApi::class)
 fun RenderContext.fileListPane(baseClass: String? = null, id: String? = null, userName: String? = null) {
@@ -149,7 +132,7 @@ fun RenderContext.fileListPane(baseClass: String? = null, id: String? = null, us
                 //console.log(resp.body())
                 // val l = FileEntry.parseFileAttrList(resp.decoded<Files2>().fileLists, "", 0)
                 //  val f = FileEntry.flattenList(l)
-                val f = FileEntry.parseFileAttrList(resp.decoded<Files2>().fileLists, "", 0).run(FileEntry::flattenList)
+                val f = FileEntry.parseFileAttrList(resp.decoded<Files>().fileLists, "", 0).run(FileEntry::flattenList)
                 Model(Loaded(name), f)
             } else {
                 Model(
@@ -168,7 +151,11 @@ fun RenderContext.fileListPane(baseClass: String? = null, id: String? = null, us
                 modelStore.load(msg.userName) // Modelが変化する
             }
 
-            is Message.Select -> TODO()
+            is Message.Select -> {
+                if(modelStore.current.state is Loaded) {
+                    modelStore.update(modelStore.current.copy(selected = msg.select))
+                }
+            }
         }
     }
 
@@ -213,17 +200,39 @@ fun RenderContext.fileListPane(baseClass: String? = null, id: String? = null, us
             rightDivContent = {}
         )
         div("grow dark:bg-black bg-white text-sm pl-1 pt-1") {
-            modelStore.data.render { model ->
+            modelStore.data.render(into = this) { model ->
                 when (model.state) {
                     is Init -> +"未接続"
                     is Loading -> +"接続中"
                     is Loaded -> {
-                        +model.fileList.toString()
-                        console.log(model.fileList)
+                        div("w-full") {
+                            if(model.fileList.isEmpty()) {
+                                +"ファイルがありません"
+                            }
+                            else {
+                                model.fileList.forEach { entry ->
+                                    button("w-full text-left") {
+                                        if (entry.isDirectory) {
+                                            i("bi bi-folder2-open mr-1") {}
+                                        } else {
+                                            i("bi bi-file-earmark-text mr-1") {}
+                                            if (entry == model.selected) {
+                                                classList(listOf<String>("hover:bg-gray-200 bg-gray-300 dark:bg-gray-700  dark:hover:bg-gray-500"))
+                                            } else {
+                                                classList(listOf<String>("hover:bg-gray-200 dark:hover:bg-gray-500 active:bg-gray-300 dark:active:bg-gray-700"))
+                                            }
+                                            clicks handledBy { update(Message.Select(entry)) }
+                                        }
+                                        inlineStyle("padding-left: ${entry.level}em;")
+                                        +entry.name
+                                    }
+                                    br {}
+                                }
+                            }
+                        }
                     }
 
                     is LoadError -> +"接続エラー（${model.state.errorMsg}"
-                    is Selected -> +"selected"
                 }
             }
         }
