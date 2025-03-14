@@ -11,4 +11,6 @@ external class FitAddon {
 
 external fun initTerminal(terminalParent: HTMLElement): dynamic
 external fun resizeTerminal()
+external fun pasteTerminal(text: String)
+external fun clearTerminal()
 external val fitAddon: FitAddon

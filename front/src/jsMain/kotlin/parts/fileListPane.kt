@@ -2,6 +2,8 @@
 
 package parts.fileListPane
 
+import FileEntry
+import Files
 import buttonClass
 import dev.fritz2.core.RenderContext
 import dev.fritz2.core.RootStore
@@ -12,7 +14,6 @@ import dev.fritz2.remote.decoded
 import dev.fritz2.remote.http
 import kotlinx.coroutines.Job
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.Serializable
 import parts.fileListPane.ModelState.*
 import parts.titleBar.titleBar
 
@@ -28,101 +29,13 @@ sealed class Message {
     data class Select(val select: FileEntry) : Message()
 }
 
-//suspend fun loadFileLists(userName: String) {
-//    val workspace = http("/codeServer2/data/workspace/user").acceptJson().contentType("application/json")
-//    console.log(workspace.get(userName))
-//    axiosClient.get(`/codeServer2/data/workspace/user/${it}`).then(
-//        res => {
-//        workSpaceStore.set(res.data.workspace)
-//        let fileEntries =
-//        FileEntry.parseFileAttrs(res.data.fileLists)
-//
-//        // 隠しフォルダを除く
-//        fileEntries = fileEntries.filter((it) =>
-//        !(it.name.startsWith("."))
-//        )
-//        // 後に提出されたものを上に持ってくる
-//        fileEntries.reverse()
-//
-//        function flatten (top: FileEntry[]) {
-//        let result : FileEntry [] = []
-//        top.forEach((file: FileEntry) => {
-//        result.push(file)
-//        if (file.children.length !== 0) {
-//            result = result.concat(flatten(file.children))
-//        }
-//    })
-//        return result
-//    }
-//
-//        fileList = flatten(fileEntries)
-//    })
-//}
-
-@Serializable
-data class FileAttr(val name: String, val path: String, val isDirectory: Boolean)
-
-@Serializable
-data class Files(val workspace: String, val fileLists: List<FileAttr>)
-
-class FileEntry(
-    val name: String,
-    val path: String,
-    val isDirectory: Boolean,
-    val children: MutableList<FileEntry>,
-    val level: Int
-) {
-    companion object {
-        fun parseFileAttrList(list: List<FileAttr>, path: String, level: Int): MutableList<FileEntry> {
-            if (list.isEmpty()) return mutableListOf()
-
-            val matchList = mutableListOf<FileAttr>()
-            val unMatchList = mutableListOf<FileAttr>()
-            val resultList = mutableListOf<FileEntry>()
-            list.forEach {
-                if (it.path == path) matchList.add(it) else unMatchList.add(it)
-            }
-            matchList.apply {
-                removeAll { it.name.startsWith(".") } //隠しファイル，ディレクトリ除去
-                sortByDescending { it.name }
-                sortByDescending { it.isDirectory } // ディレクトリを上に
-            }
-
-            matchList.map {
-                resultList.add(
-                    FileEntry(
-                        name = it.name,
-                        path = it.path,
-                        isDirectory = it.isDirectory,
-                        children = parseFileAttrList(
-                            unMatchList,
-                            if (path.isEmpty()) it.name else path + "/" + it.name,
-                            level + 1
-                        ),
-                        level = level
-                    )
-                )
-            }
-            return resultList
-        }
-
-        fun flattenList(list: List<FileEntry>): List<FileEntry> {
-            if (list.isEmpty()) return mutableListOf()
-            val result = mutableListOf<FileEntry>()
-
-            list.forEach {
-                result.add(it)
-                result.addAll(flattenList(it.children))
-            }
-            return result
-        }
-    }
-}
-
 data class Model(val state: ModelState, val fileList: List<FileEntry>, val selected: FileEntry? = null)
 
 @OptIn(ExperimentalSerializationApi::class)
-fun RenderContext.fileListPane(baseClass: String? = null, id: String? = null, userName: String? = null) {
+fun RenderContext.fileListPane(
+    baseClass: String? = null, id: String? = null, userName: String? = null,
+    fileStore: RootStore<FileEntry?>
+) {
 
     val modelStore = object : RootStore<Model>(Model(Init, emptyList()), job = Job()) {
         val load = handle<String> { _, name ->
@@ -152,13 +65,13 @@ fun RenderContext.fileListPane(baseClass: String? = null, id: String? = null, us
             }
 
             is Message.Select -> {
-                if(modelStore.current.state is Loaded) {
+                if (modelStore.current.state is Loaded) {
                     modelStore.update(modelStore.current.copy(selected = msg.select))
+                    fileStore.update(msg.select)
                 }
             }
         }
     }
-
 
     // ここからスタート
     if (userName != null) {
@@ -206,10 +119,9 @@ fun RenderContext.fileListPane(baseClass: String? = null, id: String? = null, us
                     is Loading -> +"接続中"
                     is Loaded -> {
                         div("w-full") {
-                            if(model.fileList.isEmpty()) {
+                            if (model.fileList.isEmpty()) {
                                 +"ファイルがありません"
-                            }
-                            else {
+                            } else {
                                 model.fileList.forEach { entry ->
                                     button("w-full text-left") {
                                         if (entry.isDirectory) {

@@ -2,11 +2,13 @@
 
 package parts.editorPane
 
+import FileEntry
 import afterMountElem
 import buttonClass
 import external.createEditorView
 import external.createState
 import dev.fritz2.core.RenderContext
+import dev.fritz2.core.RootStore
 import org.w3c.dom.HTMLDivElement
 import parts.titleBar.titleBar
 
@@ -17,7 +19,10 @@ sealed class ModelState {
     object Changed : ModelState()
 }
 
-fun RenderContext.editorPane(baseClass: String? = null, id: String? = null, userName: String? = null) {
+fun RenderContext.editorPane(
+    baseClass: String? = null, id: String? = null, userName: String? = null,
+    fileStore: RootStore<FileEntry?>
+) {
 
     val state = createState("kiwamu")
 
@@ -28,7 +33,11 @@ fun RenderContext.editorPane(baseClass: String? = null, id: String? = null, user
                     i("bi bi-floppy2") {}
                 }
             },
-            centerDivContent = { span { +"hooeee" } },
+            centerDivContent = {
+                fileStore.data.render { item ->
+                    span { +(item?.name ?: "") }
+                }
+            },
             rightDivContent = {}
         )
         // editor

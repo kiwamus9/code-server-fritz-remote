@@ -15,7 +15,7 @@ export let fitAddon = new FitAddon()
 
 let userName = "kiwamu"
 
-let x = new ResizeObserver((xx,y) => console.log(xx[0].borderBoxSize))
+let x = new ResizeObserver((xx, y) => console.log(xx[0].borderBoxSize))
 
 export function initTerminal(terminalParent) {
     // window.addEventListener('resize', resize)
@@ -51,5 +51,18 @@ export function resizeTerminal() {
     fitAddon.fit()
     socket?.emit("resize", {
         userName: userName, "cols": terminal.cols, "rows": terminal.rows
-})
+    })
+}
+
+export function pasteTerminal(text) {
+    if (text !== "") {
+        socket?.emit("tty", text)
+        terminal.focus()
+    }
+}
+
+export function clearTerminal() {
+    //socket?.emit("tty","\n")
+    terminal.clear()
+    terminal.focus()
 }
