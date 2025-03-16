@@ -3,11 +3,29 @@ import {__workspaces} from "../app";
 import path from "path"
 import * as fs_p from "node:fs/promises"
 import * as os from "node:os";
+import * as fs from "node:fs";
 
 const router = express.Router();
 
 type FileQuery = { user: string, root: string, sub: string, name: string }
+type FileQueryV2 = { userFullPathName: string }
+
 /* workspace file  */
+router.get('/workspace/file/v2',
+    async (req,
+           res,
+           _next) => {
+        const {userFullPathName} = req.query as FileQueryV2
+        const filePath = path.join(__workspaces, userFullPathName)
+        //console.log("fp", filePath)
+        //res.json(req.params.userName +":"+req.params.fileDir + ":" + req.params.fileName);
+        if( fs.existsSync( filePath ) ){
+            res.status(200).sendFile(filePath)
+        }else{
+            res.status(404).send("File not found")
+        }
+    });
+
 router.get('/workspace/file/',
     async (req,
            res,
@@ -19,6 +37,7 @@ router.get('/workspace/file/',
         res.sendFile(filePath)
 
     });
+
 router.put('/workspace/file/',
     (req,
      res,

@@ -5,5 +5,6 @@ package external
 
 import org.w3c.dom.HTMLElement
 
-external fun createState(doc:String): dynamic
-external fun createEditorView(editorPane: HTMLElement, editorState: dynamic): dynamic
+external fun createState(@Suppress("unused") doc:String): dynamic
+external fun createEditorView(@Suppress("unused") editorPane: HTMLElement, @Suppress("unused") editorState: dynamic): dynamic
+external fun updateEditorView(@Suppress("unused") editorView: dynamic, @Suppress("unused") content: String)

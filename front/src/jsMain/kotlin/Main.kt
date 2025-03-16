@@ -9,20 +9,23 @@ import parts.resizableRowCol.resizableCol
 import parts.resizableRowCol.resizableRow
 import parts.terminalPane.terminalPane
 
+object SelectedFileStore : RootStore<FileEntry?>(null, job = Job()) {
+    var workspaces: String? = null
+}
+
 fun main() {
     val userName = URL(window.location.href).searchParams.get("userName")
-    val selectedFileStore = object : RootStore<FileEntry?>(null, job = Job()) {}
 
     render("#target") {
-        main("flex overflow-visible") {
+        main("flex overflow-clip") {
             resizableCol(
                 initialUpperHeight = "600px",
-                upperDivContent = { editorPane(userName = userName, fileStore = selectedFileStore) },
+                upperDivContent = { editorPane(userName = userName, fileStore = SelectedFileStore) },
                 lowerDivContent = {
                     resizableRow(
                         initialLeftWidth = "200px",
-                        leftDivContent = { fileListPane(userName = userName, fileStore = selectedFileStore) },
-                        rightDicContent = { terminalPane(userName = userName, fileStore = selectedFileStore) }
+                        leftDivContent = { fileListPane(userName = userName, fileStore = SelectedFileStore) },
+                        rightDicContent = { terminalPane(userName = userName, fileStore = SelectedFileStore) }
                     )
                 })
         }

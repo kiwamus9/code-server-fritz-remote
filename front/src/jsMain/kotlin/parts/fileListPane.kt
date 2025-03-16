@@ -4,6 +4,7 @@ package parts.fileListPane
 
 import FileEntry
 import Files
+import SelectedFileStore
 import buttonClass
 import dev.fritz2.core.RenderContext
 import dev.fritz2.core.RootStore
@@ -34,7 +35,7 @@ data class Model(val state: ModelState, val fileList: List<FileEntry>, val selec
 @OptIn(ExperimentalSerializationApi::class)
 fun RenderContext.fileListPane(
     baseClass: String? = null, id: String? = null, userName: String? = null,
-    fileStore: RootStore<FileEntry?>
+    fileStore: SelectedFileStore
 ) {
 
     val modelStore = object : RootStore<Model>(Model(Init, emptyList()), job = Job()) {
@@ -43,9 +44,11 @@ fun RenderContext.fileListPane(
             val resp = workspace.get(name)
             if (resp.ok && (resp.status != 404)) {
                 //console.log(resp.body())
-                // val l = FileEntry.parseFileAttrList(resp.decoded<Files2>().fileLists, "", 0)
-                //  val f = FileEntry.flattenList(l)
-                val f = FileEntry.parseFileAttrList(resp.decoded<Files>().fileLists, "", 0).run(FileEntry::flattenList)
+                val pureBody = resp.decoded<Files>()
+                fileStore.workspaces = pureBody.workspace
+                val l = FileEntry.parseFileAttrList(pureBody.fileLists, "", 0)
+                val f = FileEntry.flattenList(l)
+//                val f = FileEntry.parseFileAttrList(resp.decoded<Files>().fileLists, "", 0).run(FileEntry::flattenList)
                 Model(Loaded(name), f)
             } else {
                 Model(
@@ -78,12 +81,12 @@ fun RenderContext.fileListPane(
         update(Message.Load(userName))
     }
 
-    div("flex flex-col h-full w-full") {
+    div("flex flex-col h-full w-full bg-red-300") {
         titleBar(
             leftDivContent = {
                 button(buttonClass) {
                     modelStore.data.render { model ->
-                        if (model.state == ModelState.Init) {
+                        if (model.state == Init) {
                             div {
                                 attr("role", "status")
                                 svg("w-[14px] h-[20px] text-gray-200 animate-spin dark:text-gray-600 text-red-300 fill-blue-600") {
@@ -104,7 +107,6 @@ fun RenderContext.fileListPane(
                             }
                         } else {
                             i("bi bi-arrow-clockwise") {}
-
                         }
                     }
                 }
@@ -112,7 +114,7 @@ fun RenderContext.fileListPane(
             centerDivContent = {},
             rightDivContent = {}
         )
-        div("grow dark:bg-black bg-white text-sm pl-1 pt-1") {
+        div("grow dark:bg-black bg-white text-sm pl-1 pt-1 overflow-scroll") {
             modelStore.data.render(into = this) { model ->
                 when (model.state) {
                     is Init -> +"未接続"
@@ -144,10 +146,9 @@ fun RenderContext.fileListPane(
                         }
                     }
 
-                    is LoadError -> +"接続エラー（${model.state.errorMsg}"
+                    is LoadError -> +"接続エラー：${model.state.errorMsg}"
                 }
             }
         }
     }
-
 }

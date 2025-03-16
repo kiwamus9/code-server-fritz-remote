@@ -15,8 +15,7 @@ export let fitAddon = new FitAddon()
 
 let userName = "kiwamu"
 
-let x = new ResizeObserver((xx, y) => console.log(xx[0].borderBoxSize))
-
+// noinspection JSUnusedGlobalSymbols
 export function initTerminal(terminalParent) {
     // window.addEventListener('resize', resize)
     terminal.loadAddon(fitAddon)
@@ -47,6 +46,7 @@ export function initTerminal(terminalParent) {
     return terminal
 }
 
+// noinspection JSUnusedGlobalSymbols
 export function resizeTerminal() {
     fitAddon.fit()
     socket?.emit("resize", {
@@ -54,15 +54,22 @@ export function resizeTerminal() {
     })
 }
 
+// noinspection JSUnusedGlobalSymbols
 export function pasteTerminal(text) {
     if (text !== "") {
         socket?.emit("tty", text)
-        terminal.focus()
     }
+    terminal.focus()
 }
 
+// noinspection JSUnusedGlobalSymbols
 export function clearTerminal() {
-    //socket?.emit("tty","\n")
+    terminal.clear()
+    terminal.focus()
+}
+
+// noinspection JSUnusedGlobalSymbols
+export function focusTerminal() {
     terminal.clear()
     terminal.focus()
 }

@@ -58,4 +58,5 @@ class FileEntry(
             return result
         }
     }
+    fun fullPathName() = "$path/$name"
 }

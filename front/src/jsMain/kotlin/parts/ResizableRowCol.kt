@@ -71,7 +71,7 @@ class ResizableRowCol(
                 borderPos = "b"
                 borderStyle = "border-bottom-width: ${borderWidth}px;"
                 initFlexBasis = " flex-basis: ${initialContent1Size};"
-                divBaseClass2 += " min-h-[100px]"
+                divBaseClass2 += " min-h-[100px] "
             }
         }
     }
@@ -155,7 +155,7 @@ fun RenderContext.resizableColRow(
             }
         }
         content1Pane =
-            div("bg-red-300 dark:border-zinc-600 border-zinc-400 shrink-0 ${setting.divBaseClass1 ?: ""}") {
+            div("dark:border-zinc-600 border-zinc-400  shrink-0 ${setting.divBaseClass1 ?: ""}") {
                 inlineStyle(setting.borderStyle + setting.initFlexBasis)
 //            div("dark:border-zinc-600 border-zinc-200 border-b-4") {
                 (setting.divContent1)()
