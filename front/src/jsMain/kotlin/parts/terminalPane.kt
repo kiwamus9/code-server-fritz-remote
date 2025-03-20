@@ -1,4 +1,3 @@
-@file:Suppress("PackageDirectoryMismatch")
 
 package parts.terminalPane
 
@@ -11,6 +10,7 @@ import dev.fritz2.core.autocomplete
 import dev.fritz2.core.beforeUnmount
 import dev.fritz2.core.placeholder
 import dev.fritz2.core.type
+import enterButtonClass
 import external.initTerminal
 import external.ResizeObserver
 import external.clearTerminal
@@ -23,7 +23,6 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLInputElement
 import parts.titleBar.titleBar
 import pasteButtonClass
-import kotlin.math.log
 
 const val numberOfPasteArea = 4
 
@@ -38,10 +37,10 @@ fun generateCommand(workSpacePath: String, fileEntry: FileEntry): String {
     val name = fileEntry.name.substring(0, lastComma)
     val ext = fileEntry.name.substring(lastComma + 1).lowercase()
 
-    when (ext) {
-        "c" -> return ("cd $workSpacePath/${fileEntry.path} && cc *.c -o $name && ./$name")
-        "java" -> return "java"
-        else -> return ""
+    return when (ext) {
+        "c" ->  ("cd $workSpacePath/${fileEntry.path} && cc *.c -lm -o $name && ./$name \n")
+        "java" ->  "java"
+        else ->  ""
     }
 }
 
@@ -52,6 +51,7 @@ fun buildAndRun(workSpacePath: String, fileEntry: FileEntry) {
 }
 
 
+@Suppress("unused")
 fun RenderContext.terminalPane(
     baseClass: String? = null,
     id: String? = null,
@@ -98,6 +98,13 @@ fun RenderContext.terminalPane(
                                 type("text")
                                 placeholder("paste文字列${it}")
                                 autocomplete("true")
+                            }
+                            button(enterButtonClass) {
+                                i("bi bi-arrow-return-left") {}
+                            }.clicks handledBy { _ ->
+                                if (terminalDynamic != null) {
+                                    pasteTerminal((document.getElementById("paste${it}") as HTMLInputElement).value + "\n")
+                                } else focusTerminal()
                             }
                         }
                     }

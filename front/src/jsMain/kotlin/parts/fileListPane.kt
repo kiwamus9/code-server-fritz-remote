@@ -32,6 +32,7 @@ sealed class Message {
 
 data class Model(val state: ModelState, val fileList: List<FileEntry>, val selected: FileEntry? = null)
 
+@Suppress("unused")
 @OptIn(ExperimentalSerializationApi::class)
 fun RenderContext.fileListPane(
     baseClass: String? = null, id: String? = null, userName: String? = null,
@@ -114,7 +115,7 @@ fun RenderContext.fileListPane(
             centerDivContent = {},
             rightDivContent = {}
         )
-        div("grow dark:bg-black bg-white text-sm pl-1 pt-1 overflow-scroll") {
+        div("grow dark:bg-black bg-white text-sm pl-1 pt-1 overflow-auto") {
             modelStore.data.render(into = this) { model ->
                 when (model.state) {
                     is Init -> +"未接続"

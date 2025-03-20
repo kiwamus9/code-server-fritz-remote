@@ -92,8 +92,8 @@
 
 .xterm .xterm-viewport {
     /* On OS X this is required in order for the scroll bar to appear fully opaque */
-    background-color: #000;
-    overflow-y: scroll;
+    /*background-color: #000;*/
+    overflow-y: auto;
     cursor: default;
     position: absolute;
     right: 0;
@@ -177,10 +177,10 @@
 }
 
 .xterm-overline.xterm-underline-1 { text-decoration: overline underline; }
-.xterm-overline.xterm-underline-2 { text-decoration: overline double underline; }
-.xterm-overline.xterm-underline-3 { text-decoration: overline wavy underline; }
-.xterm-overline.xterm-underline-4 { text-decoration: overline dotted underline; }
-.xterm-overline.xterm-underline-5 { text-decoration: overline dashed underline; }
+/*.xterm-overline.xterm-underline-2 { text-decoration: overline double underline; }*/
+/*.xterm-overline.xterm-underline-3 { text-decoration: overline wavy underline; }*/
+/*.xterm-overline.xterm-underline-4 { text-decoration: overline dotted underline; }*/
+/*.xterm-overline.xterm-underline-5 { text-decoration: overline dashed underline; }*/
 
 .xterm-strikethrough {
     text-decoration: line-through;

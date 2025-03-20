@@ -17,12 +17,13 @@ fun main() {
     val userName = URL(window.location.href).searchParams.get("userName")
 
     render("#target") {
-        main("flex overflow-clip") {
+        main("flex overflow-auto") {
             resizableCol(
                 initialUpperHeight = "600px",
                 upperDivContent = { editorPane(userName = userName, fileStore = SelectedFileStore) },
                 lowerDivContent = {
                     resizableRow(
+                        baseClass = "bg-inherit",
                         initialLeftWidth = "200px",
                         leftDivContent = { fileListPane(userName = userName, fileStore = SelectedFileStore) },
                         rightDicContent = { terminalPane(userName = userName, fileStore = SelectedFileStore) }

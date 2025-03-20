@@ -74,7 +74,7 @@ fun RenderContext.editorPane(
     }
 
 
-    div("flex flex-col h-[100%] w-[100%]" + (baseClass ?: ""), id) {
+    div("flex flex-col h-[100%] w-[100%] overflow-auto" + (baseClass ?: ""), id) {
         titleBar(
             leftDivContent = {
                 button((buttonClass)) {
@@ -98,7 +98,8 @@ fun RenderContext.editorPane(
             rightDivContent = {}
         )
         // editor
-        div("grow-0 shrink-1  h-[100%] w-[100%] dark:bg-black bg-white ", "editorPane") {
-        }.afterMount { withDom, _ -> editorView = createEditorView(withDom.domNode as HTMLDivElement, editorState) }
+        div("grow-1 shrink-1 w-[100%] h-[100%] overflow-auto dark:bg-black bg-white ", "editorPane") {
+        }.afterMount { withDom, _ -> editorView = createEditorView(withDom.domNode as HTMLDivElement, editorState)
+        }
     }
 }

@@ -61,8 +61,7 @@ class ResizableRowCol(
                 flexDirection = "flex-row"
                 borderPos = "r"
                 borderStyle = "border-right-width: ${borderWidth}px;"
-                initFlexBasis = " flex-basis: ${initialContent1Size};"
-                divBaseClass1 = " overflow-auto "
+                initFlexBasis = " flex-basis: ${initialContent1Size}; max-width: ${initialContent1Size}; "
             }
 
             Col -> {
@@ -70,7 +69,7 @@ class ResizableRowCol(
                 flexDirection = "flex-col"
                 borderPos = "b"
                 borderStyle = "border-bottom-width: ${borderWidth}px;"
-                initFlexBasis = " flex-basis: ${initialContent1Size};"
+                initFlexBasis = " flex-basis: ${initialContent1Size}; max-height: ${initialContent1Size};"
                 divBaseClass2 += " min-h-[100px] "
             }
         }
