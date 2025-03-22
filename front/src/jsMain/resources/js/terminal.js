@@ -5,9 +5,12 @@ import {io} from "socket.io-client"
 let socket = io({path: "/codeServer2/ws/"})
 
 
+const darkModeTheme = {background: "black", foreground: "white", cursor: "white"};
+const lightModeTheme = {background: "white", foreground: "black", cursor: "black"};
+
 let options = {
     cursorBlink: true, fontSize: 14,
-    lineHeight: 1.2
+    lineHeight: 1.2, theme: darkModeTheme
 }
 
 let terminal = new Terminal(options)
@@ -15,7 +18,7 @@ export let fitAddon = new FitAddon()
 
 let userName = "kiwamu"
 
-// noinspection JSUnusedGlobalSymbols
+// noinspection JSUnusedGlobalSymbols :kotlinから呼び出す
 export function initTerminal(terminalParent) {
     // window.addEventListener('resize', resize)
     terminal.loadAddon(fitAddon)
@@ -46,7 +49,7 @@ export function initTerminal(terminalParent) {
     return terminal
 }
 
-// noinspection JSUnusedGlobalSymbols
+// noinspection JSUnusedGlobalSymbols :kotlinから呼び出す
 export function resizeTerminal() {
     fitAddon.fit()
     socket?.emit("resize", {
@@ -54,7 +57,7 @@ export function resizeTerminal() {
     })
 }
 
-// noinspection JSUnusedGlobalSymbols
+// noinspection JSUnusedGlobalSymbols :kotlinから呼び出す
 export function pasteTerminal(text) {
     if (text !== "") {
         socket?.emit("tty", text)
@@ -62,14 +65,24 @@ export function pasteTerminal(text) {
     terminal.focus()
 }
 
-// noinspection JSUnusedGlobalSymbols
+// noinspection JSUnusedGlobalSymbols :kotlinから呼び出す
 export function clearTerminal() {
     terminal.clear()
     terminal.focus()
 }
 
-// noinspection JSUnusedGlobalSymbols
+// noinspection JSUnusedGlobalSymbols :kotlinから呼び出す
 export function focusTerminal() {
     terminal.clear()
     terminal.focus()
+}
+
+// noinspection JSUnusedGlobalSymbols :kotlinから呼び出す
+export function toDarkModeTerminal(terminal, isDarkMode) {
+    if (isDarkMode) {
+        terminal.options.theme = darkModeTheme
+    } else {
+        terminal.options.theme = lightModeTheme
+
+    }
 }

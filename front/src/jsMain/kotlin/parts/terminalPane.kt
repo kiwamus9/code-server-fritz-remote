@@ -1,6 +1,7 @@
 
 package parts.terminalPane
 
+import DarkModeStore
 import FileEntry
 import SelectedFileStore
 import buttonClass
@@ -17,6 +18,7 @@ import external.clearTerminal
 import external.focusTerminal
 import external.resizeTerminal
 import external.pasteTerminal
+import external.toDarkModeTerminal
 import inputTextClass
 import kotlinx.browser.document
 import org.w3c.dom.HTMLElement
@@ -56,8 +58,16 @@ fun RenderContext.terminalPane(
     baseClass: String? = null,
     id: String? = null,
     userName: String? = null,
-    fileStore: SelectedFileStore
+    fileStore: SelectedFileStore,
+    darkStore: DarkModeStore
 ) {
+
+    darkStore.data.handledBy { isDarkMode ->
+        if(terminalDynamic != null) {
+            toDarkModeTerminal(terminalDynamic, isDarkMode)
+        }
+    }
+
     div("flex flex-col w-[100%] h-[100%]") {
         titleBar(
             leftDivContent = {
@@ -111,7 +121,7 @@ fun RenderContext.terminalPane(
                 }
             }
         )
-        div("grow-1 shrink-1 min-h-[100px] w-[100%] bg-black", id = "terminalParent") {
+        div("grow-1 shrink-1 min-h-[100px] w-[100%] bg-white dark:bg-black", id = "terminalParent") {
             afterMount { withDom, _ ->
                 terminalDynamic = initTerminal(withDom.domNode as HTMLElement)
 

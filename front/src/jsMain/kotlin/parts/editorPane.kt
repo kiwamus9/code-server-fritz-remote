@@ -2,6 +2,7 @@
 
 package parts.editorPane
 
+import DarkModeStore
 import Point
 import SelectedFileStore
 import buttonClass
@@ -11,9 +12,12 @@ import dev.fritz2.core.afterMount
 import dev.fritz2.remote.http
 import external.createEditorView
 import external.createState
+import external.toDarkMode
 import external.updateEditorView
 import kotlinx.coroutines.Job
 import org.w3c.dom.HTMLDivElement
+import parts.fileListPane.ModelState.Loading
+import parts.spinner
 import parts.titleBar.titleBar
 
 sealed class ModelState {
@@ -36,13 +40,12 @@ val editorState = createState("")
 
 fun RenderContext.editorPane(
     baseClass: String? = null, id: String? = null, userName: String? = null,
-    fileStore: SelectedFileStore
+    fileStore: SelectedFileStore, darkStore: DarkModeStore
 ) {
     val modelStore = object : RootStore<Model>(Model(ModelState.Init, "", false), job = Job()) {
         val load = handle<String> { oldState, userPath ->
             val workspace = http("/codeServer2/data/workspace/file/v2").accept("text/plain").contentType("text/plain")
             val resp = workspace.get("?userFullPathName=$userPath")
-            //console.log(resp)
             if (resp.ok && (resp.status != 404)) {
                 Model(ModelState.Loaded(resp.body()), "", false)
             } else {
@@ -67,18 +70,35 @@ fun RenderContext.editorPane(
         }
     }
 
+    // 読み込みファイル切り替え
     fileStore.data.handledBy { fileEntry ->
         fileEntry?.let {
             if (userName != null) update(Message.Load(userName + "/" + it.fullPathName()))
         }
     }
 
+    // ダークモード切替
+    darkStore.data.handledBy { isDarkMode ->
+        if(editorView != null) {
+            toDarkMode(editorView, isDarkMode)
+        }
+    }
 
     div("flex flex-col h-[100%] w-[100%] overflow-auto" + (baseClass ?: ""), id) {
         titleBar(
             leftDivContent = {
-                button((buttonClass)) {
-                    i("bi bi-floppy2") {}
+                button(buttonClass) {
+                    modelStore.data.render { model ->
+                        if (model.state is ModelState.Loading) {
+                            spinner()
+                        } else {
+                            i("bi bi-floppy2") {}
+                        }
+                    }
+                }.clicks handledBy {
+                    userName?.let {
+                        update(Message.Load(it))
+                    }
                 }
             },
             centerDivContent = {
