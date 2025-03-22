@@ -29,7 +29,7 @@ fun main() {
     })
 
     render("#target") {
-        main("flex overflow-auto") {
+        main("flex") {
             resizableCol(
                 initialUpperHeight = "600px",
                 upperDivContent = { editorPane(userName = userName, fileStore = SelectedFileStore, darkStore = DarkModeStore) },

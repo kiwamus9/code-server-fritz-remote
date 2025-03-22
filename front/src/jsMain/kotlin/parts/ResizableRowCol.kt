@@ -70,7 +70,7 @@ class ResizableRowCol(
                 borderPos = "b"
                 borderStyle = "border-bottom-width: ${borderWidth}px;"
                 initFlexBasis = " flex-basis: ${initialContent1Size}; max-height: ${initialContent1Size};"
-                divBaseClass2 += " min-h-[100px] "
+                divBaseClass2 += " min-h-[100px] overflow-clip"
             }
         }
     }
