@@ -6,6 +6,9 @@ package external
 
 import org.w3c.dom.HTMLElement
 
+external interface StateEvent {
+    val isChanged: Boolean
+}
 external var baseDoc: String
 external fun createState(doc: String): dynamic
 external fun createEditorView(editorPane: HTMLElement, editorState: dynamic): dynamic

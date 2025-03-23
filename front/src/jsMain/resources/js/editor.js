@@ -4,10 +4,9 @@ import "bootstrap-icons/icons/play-fill.svg"
 import "bootstrap-icons/icons/floppy2-fill.svg"
 import "bootstrap-icons/icons/arrow-clockwise.svg"
 import {coolGlow, tomorrow} from "thememirror"
-
+import {basicSetup} from "codemirror";
 import {cpp} from "@codemirror/lang-cpp"
 //import {java} from "@codemirror/lang-java"
-
 
 const DARK_THEME = coolGlow
 const LIGHT_THEME = tomorrow
@@ -16,6 +15,8 @@ let language = new Compartment
 let theme = new Compartment
 
 export let baseDoc = ""
+let isChanged = false
+let parentView = null
 
 // Define StateField
 const listenChangesExtension = StateField.define({
@@ -23,8 +24,16 @@ const listenChangesExtension = StateField.define({
     create: () => null,
     update: (value, transaction) => {
         if (transaction.docChanged) {
-            // access new content via the Transaction
-            console.log(transaction.newDoc.eq(baseDoc));
+            if(transaction.newDoc.eq(baseDoc) === isChanged) {
+                isChanged = !isChanged
+                parentView.dispatchEvent(
+                    new CustomEvent("editorStat", {
+                        detail: {
+                            isChanged: isChanged,
+                        },
+                    })
+                )
+            }
         }
         return null;
     },
@@ -33,10 +42,13 @@ const listenChangesExtension = StateField.define({
 
 // noinspection JSUnusedGlobalSymbols :kotlinから呼び出す
 export function createState(doc) {
+    baseDoc = doc
+    isChanged = false
     return EditorState.create({
         doc: doc, // 初期値を指定
         extensions: [
             EditorView.baseTheme({"&": {height: "100%"}}),
+            basicSetup,
             listenChangesExtension,
             language.of(cpp()), //javaもこれでいい
             theme.of(coolGlow) // defaultはdark mode
@@ -46,6 +58,7 @@ export function createState(doc) {
 
 // noinspection JSUnusedGlobalSymbols :kotlinから呼び出す
 export function createEditorView(editorPane, editorState) {
+    parentView = editorPane
     return new EditorView({
         state: editorState,
         parent: editorPane
@@ -54,6 +67,8 @@ export function createEditorView(editorPane, editorState) {
 
 // noinspection JSUnusedGlobalSymbols :kotlinから呼び出す
 export function updateEditorView(editorView, content) {
+    baseDoc = content
+    isChanged = false
     const transaction =
         editorView.state.update({
             changes: {
@@ -76,6 +91,3 @@ export function toDarkMode(view, isDarkMode) {
         })
     }
 }
-
-
-//baseDoc.eq(state.doc)
