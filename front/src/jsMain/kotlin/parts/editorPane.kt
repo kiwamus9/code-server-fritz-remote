@@ -9,14 +9,15 @@ import buttonClass
 import dev.fritz2.core.RenderContext
 import dev.fritz2.core.RootStore
 import dev.fritz2.core.afterMount
+import dev.fritz2.core.disabled
 import dev.fritz2.remote.http
 import external.createEditorView
 import external.createState
 import external.toDarkMode
 import external.updateEditorView
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.map
 import org.w3c.dom.HTMLDivElement
-import parts.fileListPane.ModelState.Loading
 import parts.spinner
 import parts.titleBar.titleBar
 
@@ -79,7 +80,7 @@ fun RenderContext.editorPane(
 
     // ダークモード切替
     darkStore.data.handledBy { isDarkMode ->
-        if(editorView != null) {
+        if (editorView != null) {
             toDarkMode(editorView, isDarkMode)
         }
     }
@@ -88,6 +89,21 @@ fun RenderContext.editorPane(
         titleBar(
             leftDivContent = {
                 button(buttonClass) {
+                    disabled(modelStore.data.map { it.state is ModelState.Init })
+                    modelStore.data.render { model ->
+                        if (model.state is ModelState.Loading) {
+                            spinner()
+                        } else {
+                            i("bi bi-arrow-clockwise") {}
+                        }
+                    }
+                }.clicks handledBy {
+                    userName?.let {
+                        update(Message.Load(it))
+                    }
+                }
+                button(buttonClass) {
+                    disabled(modelStore.data.map { it.state is ModelState.Init })
                     modelStore.data.render { model ->
                         if (model.state is ModelState.Loading) {
                             spinner()
@@ -111,6 +127,7 @@ fun RenderContext.editorPane(
                             +(fileStore.current?.fullPathName() ?: "ファイルパスエラー")
                             updateEditorView(editorView, model.state.content)
                         }
+
                         ModelState.Loading -> +"接続中"
                     }
                 }
@@ -119,7 +136,8 @@ fun RenderContext.editorPane(
         )
         // editor
         div("grow-1 shrink-1 w-[100%] h-[100%] overflow-auto dark:bg-black bg-white ", "editorPane") {
-        }.afterMount { withDom, _ -> editorView = createEditorView(withDom.domNode as HTMLDivElement, editorState)
+        }.afterMount { withDom, _ ->
+            editorView = createEditorView(withDom.domNode as HTMLDivElement, editorState)
         }
     }
 }

@@ -39,39 +39,29 @@ fun <V> Flow<V>.exec(
     }
 }
 
-/*
-fun <T : Element> Tag<T>.afterMountElem(
-    payload: Any? = null,
-    handler: suspend (WithDomNode<Element>, Any?) -> Unit,
-): Tag<T> {
-    this.afterMount(payload, handler)
-    return this
-}
-
-fun String.joinWithSpace(vararg strs: String): String {
-    val startStr = this.trimEnd()
-    val trimStrs = strs.joinToString(" ") { it.trim() }
-    return "$startStr $trimStrs"
-}
- */
-
 const val titleBarClass = "text-gray-900 dark:text-white  bg-zinc-100 dark:bg-zinc-800 align-text-bottom"
-const val buttonClass = "text-gray-500 bg-white border border-gray-300 focus:outline-none " +
-        "hover:bg-gray-200 hover:text-black " +
-        "focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-2 py-1 ms-2 " +
-        "dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 " +
-        "dark:hover:text-white dark:hover:bg-gray-700 dark:hover:border-gray-600 " +
-        "dark:focus:ring-gray-700"
-const val pasteButtonClass = "text-gray-500 bg-white border border-gray-300 focus:outline-none " +
-        "hover:bg-gray-200 hover:text-black " +
-        "focus:ring-4 focus:ring-gray-100 font-medium rounded-l-lg text-sm px-2 py-1 ms-2 " +
-        "dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 " +
-        "dark:hover:text-white dark:hover:bg-gray-700 dark:hover:border-gray-600 " +
-        "dark:focus:ring-gray-700"
-const val enterButtonClass = "text-gray-500 bg-white border border-gray-300 focus:outline-none " +
-        "hover:bg-gray-200 hover:text-black " +
-        "focus:ring-4 focus:ring-gray-100 font-medium rounded-r-lg text-sm px-2 py-1 " +
-        "dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 " +
-        "dark:hover:text-white dark:hover:bg-gray-700 dark:hover:border-gray-600 " +
-        "dark:focus:ring-gray-700"
+
+val buttonColorDef = listOf(
+    "px-2 text-sm font-medium text-center shadow-lg",
+    "border border-blue-500",
+    "text-gray-200 bg-blue-500 ",
+    "hover:text-white hover:bg-blue-600 hover:shadow-blue-600/50",
+    "active:bg-blue-700",
+    "disabled:bg-blue-400 disabled:text-white",
+    "disabled:hover:shadow-blue-600/50",
+)
+val buttonClass = (buttonColorDef + "py-1 my-1  ms-2 rounded-lg").joinToString(
+    separator = " ",
+    postfix = " ", prefix = " "
+)
+
+val pasteButtonClass = (buttonColorDef + "ms-2 rounded-l-lg").joinToString(
+    separator = " ",
+    postfix = " ", prefix = " "
+)
+
+val enterButtonClass = (buttonColorDef + "rounded-r-lg").joinToString(
+    separator = " ",
+    postfix = " ", prefix = " "
+)
 const val inputTextClass = "border border-gray-300 dark:border-gray-600 ps-1"

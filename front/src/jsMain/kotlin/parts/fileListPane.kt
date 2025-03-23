@@ -8,11 +8,12 @@ import SelectedFileStore
 import buttonClass
 import dev.fritz2.core.RenderContext
 import dev.fritz2.core.RootStore
+import dev.fritz2.core.disabled
 import dev.fritz2.remote.decoded
 import dev.fritz2.remote.http
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.ExperimentalSerializationApi
-import parts.fileListPane.Message.Load
 import parts.fileListPane.ModelState.*
 import parts.spinner
 import parts.titleBar.titleBar
@@ -84,6 +85,7 @@ fun RenderContext.fileListPane(
         titleBar(
             leftDivContent = {
                 button(buttonClass) {
+                    disabled(modelStore.data.map { it.state is Init  })
                     modelStore.data.render { model ->
                         if (model.state is Loading) {
                             spinner()
@@ -117,9 +119,11 @@ fun RenderContext.fileListPane(
                                         } else {
                                             i("bi bi-file-earmark-text mr-1") {}
                                             if (entry == model.selected) {
-                                                classList(listOf<String>("hover:bg-gray-200 bg-gray-300 dark:bg-gray-700  dark:hover:bg-gray-500"))
+                                                classList(listOf<String>("hover:bg-gray-200 bg-gray-300 " +
+                                                        "dark:bg-gray-700  dark:hover:bg-gray-500"))
                                             } else {
-                                                classList(listOf<String>("hover:bg-gray-200 dark:hover:bg-gray-500 active:bg-gray-300 dark:active:bg-gray-700"))
+                                                classList(listOf<String>("hover:bg-gray-200 dark:hover:bg-gray-500 " +
+                                                        "active:bg-gray-300 dark:active:bg-gray-700"))
                                             }
                                             clicks handledBy { update(Message.Select(entry)) }
                                         }

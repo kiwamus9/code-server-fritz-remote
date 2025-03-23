@@ -20,7 +20,7 @@ fun RenderContext.titleBar(
     //div("w-full h-auto min-h-[2.3em] shrink-0 flex flex-row justify-between bg-blue-300 " + (baseClass ?: titleBarClass), id) {
     div(
 //        "py-1 w-full h-auto h-min-[33px] shrink-0 flex flex-row justify-between bg-blue-300 " + (baseClass
-        "py-1 flex flex-row justify-between bg-blue-300 " + (baseClass
+        "flex flex-row justify-between bg-blue-300 " + (baseClass
             ?: titleBarClass), id
     ) {
         leftPane = div("flex items-center") { leftDivContent() }

@@ -1,3 +1,4 @@
+@file:Suppress("PackageDirectoryMismatch")
 
 package parts.terminalPane
 
@@ -95,7 +96,7 @@ fun RenderContext.terminalPane(
             rightDivContent = {
                 div("flex flex-row flex-wrap me-2") {
                     (1..numberOfPasteArea).forEach {
-                        div("flex rounded-lg shadow-sm") {
+                        div("flex my-1 rounded-lg shadow-sm") {
                             button(pasteButtonClass) {
                                 i("bi bi-clipboard-fill") {}
                             }.clicks handledBy { _ ->

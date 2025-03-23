@@ -127,11 +127,14 @@ fun RenderContext.resizableColRow(
                     allPane.inlineStyle("user-select: none; -webkit-user-select: none;")
                     when (setting.type) {
                         Row -> {
-                            content1Pane.inlineStyle(setting.borderStyle + " width:${state.point.x}px; flex-basis: ${state.point.x}px;  max-width: ${state.point.x}px")
+                            content1Pane.inlineStyle(setting.borderStyle +
+                                    " width:${state.point.x}px; flex-basis: ${state.point.x}px;" +
+                                    "  max-width: ${state.point.x}px")
                         }
 
                         Col -> {
-                            content1Pane.inlineStyle(setting.borderStyle + " flex-basis: ${state.point.y}px; max-height: ${state.point.y}px")
+                            content1Pane.inlineStyle(setting.borderStyle +
+                                    " flex-basis: ${state.point.y}px; max-height: ${state.point.y}px")
                         }
                     }
                 }
