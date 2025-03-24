@@ -10,6 +10,7 @@ import dev.fritz2.core.RenderContext
 import dev.fritz2.core.afterMount
 import dev.fritz2.core.autocomplete
 import dev.fritz2.core.beforeUnmount
+import dev.fritz2.core.disabled
 import dev.fritz2.core.placeholder
 import dev.fritz2.core.type
 import enterButtonClass
@@ -41,9 +42,9 @@ fun generateCommand(workSpacePath: String, fileEntry: FileEntry): String {
     val ext = fileEntry.name.substring(lastComma + 1).lowercase()
 
     return when (ext) {
-        "c" ->  ("cd $workSpacePath/${fileEntry.path} && cc *.c -lm -o $name && ./$name \n")
-        "java" ->  "java"
-        else ->  ""
+        "c" -> ("cd $workSpacePath/${fileEntry.path} && cc *.c -lm -o $name && ./$name \n")
+        "java" -> ("cd $workSpacePath/${fileEntry.path} && javac *.java && java $name \n")
+        else -> ""
     }
 }
 
@@ -64,7 +65,7 @@ fun RenderContext.terminalPane(
 ) {
 
     darkStore.data.handledBy { isDarkMode ->
-        if(terminalDynamic != null) {
+        if (terminalDynamic != null) {
             toDarkModeTerminal(terminalDynamic, isDarkMode)
         }
     }
@@ -74,6 +75,7 @@ fun RenderContext.terminalPane(
             leftDivContent = {
                 div {
                     button(buttonClass) {
+                        disabled(userName == null)
                         i("bi bi-play-fill") {}
                     }.clicks handledBy { _ ->
                         fileStore.current?.let {
@@ -84,6 +86,7 @@ fun RenderContext.terminalPane(
                         }
                     }
                     button(buttonClass) {
+                        disabled(userName == null)
                         i("bi bi-trash-fill") {}
                     }.clicks handledBy { _ ->
                         if (terminalDynamic != null) {
@@ -98,6 +101,7 @@ fun RenderContext.terminalPane(
                     (1..numberOfPasteArea).forEach {
                         div("flex my-1 rounded-lg shadow-sm") {
                             button(pasteButtonClass) {
+                                disabled(userName == null)
                                 i("bi bi-clipboard-fill") {}
                             }.clicks handledBy { _ ->
                                 if (terminalDynamic != null) {
@@ -111,6 +115,7 @@ fun RenderContext.terminalPane(
                                 autocomplete("true")
                             }
                             button(enterButtonClass) {
+                                disabled(userName == null)
                                 i("bi bi-arrow-return-left") {}
                             }.clicks handledBy { _ ->
                                 if (terminalDynamic != null) {
@@ -123,16 +128,18 @@ fun RenderContext.terminalPane(
             }
         )
         div("grow-1 shrink-1 min-h-[100px] w-[100%] bg-white dark:bg-black", id = "terminalParent") {
-            afterMount { withDom, _ ->
-                terminalDynamic = initTerminal(withDom.domNode as HTMLElement)
+            if (userName == null) {
+                +"未接続"
+            } else {
+                afterMount { withDom, _ ->
+                    terminalDynamic = initTerminal(withDom.domNode as HTMLElement, userName)
 
-                observer = ResizeObserver { entries, _ ->
-//                    console.log(entries[0].borderBoxSize[0].blockSize.toString())
-//                    console.log(entries[0].borderBoxSize[0].inlineSize)
-                    resizeTerminal()
+                    observer = ResizeObserver { entries, _ ->
+                        resizeTerminal()
+                    }
+                    observer.observe(withDom.domNode)
+
                 }
-                observer.observe(withDom.domNode)
-
             }
             beforeUnmount { withDom, _ ->
                 observer.unobserve(withDom.domNode)

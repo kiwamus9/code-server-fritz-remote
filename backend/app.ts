@@ -61,9 +61,14 @@ io.on('connection', (socket) => {
     socket.on('init', async (param) => {
 
         const sockets = await io.fetchSockets()
-        sockets.forEach((socket) => {
-            console.log(socket.id, socket.data["userName"])
-        })
+        let already = sockets.find(socket =>
+            socket.data["userName"] === param.userName
+        )
+        console.log("al", !(already === undefined))
+
+
+
+
         socket.data["userName"] = param.userName
         let ptyProcess = pty.spawn('zsh', ['--login'], {
             name: 'xterm-256color',
@@ -72,11 +77,11 @@ io.on('connection', (socket) => {
             cwd: process.env.HOME,
             env: process.env,
         });
-        console.log("ptyProcess", ptyProcess.pid)
         socket.data["ptyProcess"] = ptyProcess
         ptyProcess.onData((data) => {
             io.to(socket.id).emit('tty', data)
         })
+        console.log("pty", ptyProcess.pid, "user", param.userName, "cols", param.cols, "rows", param.rows)
     })
     socket.on('resize', (param) => {
         console.log('user resize')

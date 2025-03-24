@@ -3,7 +3,6 @@
 package parts.editorPane
 
 import DarkModeStore
-import Point
 import SelectedFileStore
 import buttonClass
 import dev.fritz2.core.RenderContext
@@ -11,12 +10,14 @@ import dev.fritz2.core.RootStore
 import dev.fritz2.core.afterMount
 import dev.fritz2.core.disabled
 import dev.fritz2.remote.http
+import external.EditorView
 import external.StateEvent
-import external.baseDoc
 import external.createEditorView
 import external.createState
+import external.resetDocChanged
 import external.toDarkMode
 import external.updateEditorView
+import kotlinx.browser.window
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -34,12 +35,12 @@ sealed class ModelState {
 
 sealed class Message {
     data class Load(val userFullPathName: String) : Message()
-    data class Save(val point: Point) : Message()
+    object Save : Message()
 }
 
 data class Model(val state: ModelState, val content: String)
 
-var editorView: dynamic? = null
+var editorView: EditorView? = null
 val editorState = createState("")
 
 fun RenderContext.editorPane(
@@ -47,8 +48,8 @@ fun RenderContext.editorPane(
     fileStore: SelectedFileStore, darkStore: DarkModeStore
 ) {
     val modelStore = object : RootStore<Model>(Model(ModelState.Init, ""), job = Job()) {
-        val load = handle<String> { oldState, userPath ->
-            val workspace = http("/codeServer2/data/workspace/file/v2").accept("text/plain").contentType("text/plain")
+        val workspace = http("/codeServer2/data/workspace/file/v2").accept("text/plain").contentType("text/plain")
+        val load = handle<String> { oldModel, userPath ->
             val resp = workspace.get("?userFullPathName=$userPath")
             if (resp.ok && (resp.status != 404)) {
                 Model(ModelState.Loaded(resp.body()), "")
@@ -66,14 +67,29 @@ fun RenderContext.editorPane(
     var isChangeFlow = MutableStateFlow(false)
 
 
-    fun update(msg: Message) {
+    suspend fun update(msg: Message) {
         when (msg) {
             is Message.Load -> {
                 modelStore.update(Model(ModelState.Loading, ""))
                 modelStore.load(msg.userFullPathName) // Modelが変化する
             }
 
-            is Message.Save -> TODO()
+            is Message.Save -> {
+                if (modelStore.current.state is ModelState.Loaded) {
+                    val userSavePath = userName + "/" + fileStore.current!!.fullPathName()
+                    val saveContent = editorView!!.state.doc
+                    val workspace = http("/codeServer2/data/workspace/file/v2").acceptJson()
+                        .contentType("application/json")
+                    val resp = workspace.body(JSON.stringify(saveContent.toJSON())).put("?userFullPathName=$userSavePath")
+                    if (!resp.ok or (resp.status != 200)) {
+                        window.alert("ファイル保存に失敗しました")
+                    } else {
+                        // 新しく変更チェックを始める
+                        resetDocChanged(saveContent.toString())
+                        isChangeFlow.value = false
+                    }
+                }
+            }
         }
     }
 
@@ -86,9 +102,7 @@ fun RenderContext.editorPane(
 
     // ダークモード切替
     darkStore.data.handledBy { isDarkMode ->
-        if (editorView != null) {
-            toDarkMode(editorView, isDarkMode)
-        }
+        editorView?.let { toDarkMode(it, isDarkMode) }
     }
 
     div("flex flex-col h-[100%] w-[100%] overflow-auto" + (baseClass ?: ""), id) {
@@ -115,23 +129,22 @@ fun RenderContext.editorPane(
                     i("bi bi-floppy2") {}
                 }.clicks handledBy {
                     userName?.let {
-                        update(Message.Load(it))
+                        update(
+                            Message.Save
+                        )
                     }
                 }
             },
             centerDivContent = {
                 modelStore.data.render { model ->
                     when (model.state) {
-                        ModelState.Init -> +"未接続"
+                        is ModelState.Init -> +"未接続"
+                        is ModelState.Loading -> +"接続中"
                         is ModelState.LoadError -> +"接続エラー：${model.state.errMessage}"
                         is ModelState.Loaded -> {
-                            if (baseDoc.isEmpty()) {
-                                +(fileStore.current?.fullPathName() ?: "ファイルパスエラー")
-                                updateEditorView(editorView, model.state.content)
-                            }
+                            +(fileStore.current?.fullPathName() ?: "ファイルパスエラー")
+                            editorView?.let { updateEditorView(it, model.state.content) }
                         }
-
-                        ModelState.Loading -> +"接続中"
                     }
                 }
             },

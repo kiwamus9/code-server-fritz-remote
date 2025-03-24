@@ -26,6 +26,23 @@ router.get('/workspace/file/v2',
         }
     });
 
+router.put('/workspace/file/v2',
+    (req,
+     res,
+     _next) => {
+        const {userFullPathName} = req.query as FileQueryV2
+        const filePath = path.join(__workspaces, userFullPathName)
+
+        console.log(req.body)
+        //console.log("fp", filePath, req.body.join(os.EOL))
+
+        fs_p.writeFile(filePath, req.body.join(os.EOL), "utf8").then(_ => {
+            res.status(200).send("write success")
+        }).catch(_ => {
+            res.status(500).send("write failed")
+        })
+    });
+
 router.get('/workspace/file/',
     async (req,
            res,

@@ -1,5 +1,6 @@
 import dev.fritz2.core.RootStore
 import dev.fritz2.core.render
+import external.hoe
 import kotlinx.browser.window
 import kotlinx.coroutines.Job
 import org.w3c.dom.MediaQueryListEvent
@@ -14,10 +15,9 @@ object SelectedFileStore : RootStore<FileEntry?>(null, job = Job()) {
     var workspaces: String? = null
 }
 
-
 val darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
 
-object DarkModeStore : RootStore<Boolean>(darkModeMediaQuery.matches, job = Job()) {}
+object DarkModeStore : RootStore<Boolean>(darkModeMediaQuery.matches, job = Job())
 
 
 fun main() {
@@ -27,7 +27,7 @@ fun main() {
         val ev = e as MediaQueryListEvent
         DarkModeStore.update(ev.matches)
     })
-
+    hoe{ console.log(it)}
     render("#target") {
         main("flex") {
             resizableCol(
@@ -45,19 +45,3 @@ fun main() {
         }
     }
 }
-/*
-const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-const darkModeOn = darkModeMediaQuery.matches;
-
-darkModeMediaQuery.addListener((e) => {
-    const darkModeOn = e.matches;
-    if (darkModeOn) {
-        document.body.classList.remove('light-mode');
-        document.body.classList.add('dark-mode');
-    } else {
-        document.body.classList.remove('dark-mode');
-        document.body.classList.add('light-mode');
-    }
-});
-
- */

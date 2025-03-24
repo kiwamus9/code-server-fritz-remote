@@ -39,11 +39,15 @@ const listenChangesExtension = StateField.define({
     },
 });
 
+// noinspection JSUnusedGlobalSymbols :kotlinから呼び出す
+export function resetDocChanged(doc) {
+    baseDoc = doc
+    isChanged = false
+}
 
 // noinspection JSUnusedGlobalSymbols :kotlinから呼び出す
 export function createState(doc) {
-    baseDoc = doc
-    isChanged = false
+    resetDocChanged(doc)
     return EditorState.create({
         doc: doc, // 初期値を指定
         extensions: [
@@ -67,8 +71,7 @@ export function createEditorView(editorPane, editorState) {
 
 // noinspection JSUnusedGlobalSymbols :kotlinから呼び出す
 export function updateEditorView(editorView, content) {
-    baseDoc = content
-    isChanged = false
+    resetDocChanged(content)
     const transaction =
         editorView.state.update({
             changes: {
