@@ -57,17 +57,16 @@ app.use(function (err: HttpError, req: Request, res: Response, _next: NextFuncti
 
 // socket.io setting
 io.on('connection', (socket) => {
-    console.log('a user connected')
     socket.on('init', async (param) => {
 
         const sockets = await io.fetchSockets()
-        let already = sockets.find(socket =>
+        let alreadySocket = sockets.find(socket =>
             socket.data["userName"] === param.userName
         )
-        console.log("al", !(already === undefined))
-
-
-
+        if (alreadySocket !== undefined) {
+            console.log("al", alreadySocket.id)
+            alreadySocket.disconnect(true)
+        }
 
         socket.data["userName"] = param.userName
         let ptyProcess = pty.spawn('zsh', ['--login'], {
@@ -84,17 +83,17 @@ io.on('connection', (socket) => {
         console.log("pty", ptyProcess.pid, "user", param.userName, "cols", param.cols, "rows", param.rows)
     })
     socket.on('resize', (param) => {
-        console.log('user resize')
         socket.data["ptyProcess"]?.resize(param.cols, param.rows)
     })
     socket.on('tty', (data) => {
-        // console.log('user tty')
         socket.data["ptyProcess"].write(data)
     })
-    socket.on('disconnect', () => {
+    socket.on('disconnect', async (reason) => {
         console.log('user disconnected')
-        // const ps = socket.data["ptyProcess"]
-        // console.dir(ptyProcess.pid)
+        const sockets = await io.fetchSockets()
+        sockets.forEach((socket) => {
+            console.log("u",socket.data["userName"], "p", socket.data["ptyProcess"]._pid, "id", socket.id)
+        })
         socket.data["ptyProcess"]?.kill("SIGKILL")
         // console.dir(ptyProcess)
     })

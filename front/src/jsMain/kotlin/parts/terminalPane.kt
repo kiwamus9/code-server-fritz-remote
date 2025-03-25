@@ -31,7 +31,7 @@ import pasteButtonClass
 const val numberOfPasteArea = 4
 
 var terminalDynamic: dynamic? = null
-lateinit var observer: ResizeObserver
+var observer: ResizeObserver? = null
 
 
 fun generateCommand(workSpacePath: String, fileEntry: FileEntry): String {
@@ -54,7 +54,6 @@ fun buildAndRun(workSpacePath: String, fileEntry: FileEntry) {
     }
 }
 
-
 @Suppress("unused")
 fun RenderContext.terminalPane(
     baseClass: String? = null,
@@ -63,7 +62,6 @@ fun RenderContext.terminalPane(
     fileStore: SelectedFileStore,
     darkStore: DarkModeStore
 ) {
-
     darkStore.data.handledBy { isDarkMode ->
         if (terminalDynamic != null) {
             toDarkModeTerminal(terminalDynamic, isDarkMode)
@@ -132,17 +130,25 @@ fun RenderContext.terminalPane(
                 +"未接続"
             } else {
                 afterMount { withDom, _ ->
-                    terminalDynamic = initTerminal(withDom.domNode as HTMLElement, userName)
+                    terminalDynamic = initTerminal(withDom.domNode as HTMLElement, userName) { reason, id ->
+                        console.log(reason)
+                        if (reason.startsWith("io server disconnect", ignoreCase = true)) {
+                            withDom.domNode.innerHTML = ""
+                            withDom.domNode.prepend(
+                                document.createTextNode(" 複数のウィンドウでターミナルは開けません．")
+                            )
+                        }
+                    }
 
                     observer = ResizeObserver { entries, _ ->
                         resizeTerminal()
                     }
-                    observer.observe(withDom.domNode)
+                    observer?.observe(withDom.domNode)
 
                 }
             }
             beforeUnmount { withDom, _ ->
-                observer.unobserve(withDom.domNode)
+                observer?.unobserve(withDom.domNode)
                 console.log("beforeUnmount")
             }
         }

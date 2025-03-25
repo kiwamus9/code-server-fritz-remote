@@ -17,33 +17,37 @@ let terminal = new Terminal(options)
 export let fitAddon = new FitAddon()
 
 let userName = "kiwamu"
+let socketID
+
 // noinspection JSUnusedGlobalSymbols :kotlinから呼び出す
-export function initTerminal(terminalParent) {
+export function initTerminal(terminalParent, userName, disconnectedFunc) {
     // window.addEventListener('resize', resize)
     terminal.loadAddon(fitAddon)
     terminal.open(terminalParent);
     terminal.resize(10, 10)
     fitAddon.fit()
-    terminal.onData((data) => {
-        socket?.emit('tty', data)
-    })
-    socket?.on('disconnect', () => {
-            console.log('socket disconnect', new Date())
-        }
-    )
+
     socket?.on('connect', () => {
         console.log('socket connect', new Date())
+        socketID = socket.id
         socket.emit('init', {
             userName: userName,
             cols: terminal.cols,
             rows: terminal.rows,
         })
     })
-    // socket?.on('connect', () => {
-    //     console.log('socket connect', new Date())
-    // })
+
+    socket?.on('disconnect', (reason) => {
+        disconnectedFunc(reason, socketID)
+        console.log('socket disconnect', new Date())
+    })
+
     socket?.on('tty', (data) => {
         terminal.write(data)
+    })
+
+    terminal.onData((data) => {
+        socket?.emit('tty', data)
     })
     return terminal
 }
@@ -84,8 +88,4 @@ export function toDarkModeTerminal(terminal, isDarkMode) {
         terminal.options.theme = lightModeTheme
 
     }
-}
-
-export function hoe(ff) {
-    ff(1)
 }
