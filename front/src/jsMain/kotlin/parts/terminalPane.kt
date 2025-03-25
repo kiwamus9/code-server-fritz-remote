@@ -43,7 +43,7 @@ fun generateCommand(workSpacePath: String, fileEntry: FileEntry): String {
 
     return when (ext) {
         "c" -> ("cd $workSpacePath/${fileEntry.path} && cc *.c -lm -o $name && ./$name \n")
-        "java" -> ("cd $workSpacePath/${fileEntry.path} && javac *.java && java $name \n")
+        "java" -> ("cd $workSpacePath/${fileEntry.path} && javac -encoding UTF-8 *.java && java $name \n")
         else -> ""
     }
 }
