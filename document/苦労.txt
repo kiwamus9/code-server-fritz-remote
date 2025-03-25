@@ -9,3 +9,10 @@ templの中に一行コメント「//」が入るとテンプレートローダ�
 
 3.
 https://telehakke.github.io/tailwindcss-japanese-cheat-sheet-v4/
+
+4.
+viteBuildでbackendのbodyにコピーできない．．
+手動で，front/build/vite/distの下をbackend/bodyにコピー
+
+5.
+tsxのままでデプロイしていいような気がする

@@ -1,0 +1,28 @@
+FROM ubuntu:22.04
+RUN apt-get update
+RUN apt-get install -y language-pack-ja-base language-pack-ja locales tzdata
+RUN locale-gen ja_JP.UTF-8
+ENV LANG ja_JP.UTF-8
+ENV TZ Asia/Tokyo
+ENV LANGUAGE ja_JP:ja
+
+
+RUN apt-get update
+RUN apt-get install -y curl make less gcc g++
+
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x -o /tmp/nodesource_setup.sh
+RUN bash /tmp/nodesource_setup.sh
+RUN apt-get install nodejs -y
+RUN apt upgrade -y
+RUN npm install -g npm@11.2.0
+
+COPY backend/ /backend/
+COPY package.json /package.json
+
+# RUN npm install
+EXPOSE 3001
+#CMD ["apachectl", "-D", "FOREGROUND"]
+# CMD ["sh", "/bin/bgapache"]
+# CMD ["code-server"]
+CMD ["sh"]
+

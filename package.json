@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "back-end-dev": "tsx --watch backend/bin/www.ts",
+    "back-end-pro": "tsx backend/bin/www.ts",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
@@ -21,7 +22,6 @@
     "@types/http-errors": "^2.0.4",
     "@types/morgan": "^1.9.9",
     "@types/twig": "^1.12.16",
-    "@types/xterm": "^3.0.0",
     "tslib": "^2.8.0",
     "tsx": "^4.19.2",
     "typescript": "~5.7.3",

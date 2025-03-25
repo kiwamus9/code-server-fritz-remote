@@ -30,6 +30,7 @@ export default {
         target: "modules",
         modulePreload: true,
         outDir: "$outDir",
+        emptyOutDir: true
     },
 }
 

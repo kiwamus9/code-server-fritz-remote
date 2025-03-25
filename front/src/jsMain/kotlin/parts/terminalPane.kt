@@ -62,6 +62,13 @@ fun RenderContext.terminalPane(
     fileStore: SelectedFileStore,
     darkStore: DarkModeStore
 ) {
+    // 選択ファイルが変わった時にターミナルをクリアする
+    fileStore.data.handledBy { fileEntry ->
+        if((fileEntry != null) && (terminalDynamic != null)) {
+            clearTerminal()
+        }
+    }
+    //　ダークモード
     darkStore.data.handledBy { isDarkMode ->
         if (terminalDynamic != null) {
             toDarkModeTerminal(terminalDynamic, isDarkMode)
