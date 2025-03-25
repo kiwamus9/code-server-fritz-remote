@@ -88,7 +88,7 @@ io.on('connection', (socket) => {
     socket.on('tty', (data) => {
         socket.data["ptyProcess"].write(data)
     })
-    socket.on('disconnect', async (reason) => {
+    socket.on('disconnect', async (_) => {
         console.log('user disconnected')
         const sockets = await io.fetchSockets()
         sockets.forEach((socket) => {
