@@ -138,7 +138,7 @@ fun RenderContext.editorPane(
             centerDivContent = {
                 modelStore.data.render { model ->
                     when (model.state) {
-                        is ModelState.Init -> +"未接続"
+                        is ModelState.Init -> +"未選択"
                         is ModelState.Loading -> +"接続中"
                         is ModelState.LoadError -> +"接続エラー：${model.state.errMessage}"
                         is ModelState.Loaded -> {
