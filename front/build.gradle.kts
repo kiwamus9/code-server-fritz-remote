@@ -96,6 +96,7 @@ tasks.named("viteBuild") {
             expand(
                 Pair("base", viteConfig.base.get()),
                 Pair("outDir", viteConfig.build.outDir.get()),
+                Pair("emptyOutDir",true)
             )
             rename("vite.config.templ.js", "vite.config.js")
         }
