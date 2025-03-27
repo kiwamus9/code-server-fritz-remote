@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.w3c.dom.BroadcastChannel
 import org.w3c.dom.MessageEvent
-import org.w3c.dom.events.EventTarget
 import parts.fileListPane.ModelState.*
 import parts.spinner
 import parts.titleBar.titleBar
