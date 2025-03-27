@@ -21,7 +21,7 @@ export const io = new Server<ClientToServerEvents, ServerToClientEvents>()
 // @ts-ignore
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-export const __workspaces = path.join(__dirname, "workspaces")
+export const __workspaces = path.join(__dirname, "workspace")
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
