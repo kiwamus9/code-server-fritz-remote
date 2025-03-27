@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" style="width: 100%; height: 100%;">
+<head>
+    <meta charset="UTF-8">
+    <title>TOP</title>
+</head>
+<body style="width: 100%; height: 100%;">
+<button id="reload" >reload</button>
+<iframe width="80%" height="80%" src="index?userName=kiwamu">
+</iframe>
+
+<script>
+    const bc = new BroadcastChannel("FileListPane")
+    const rButton = document.getElementById("reload")
+    rButton.onclick = function () {
+        bc.postMessage("reload")
+    }
+</script>
+</body>
+</html>

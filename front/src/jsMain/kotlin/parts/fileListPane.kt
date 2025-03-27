@@ -14,6 +14,9 @@ import dev.fritz2.remote.http
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.ExperimentalSerializationApi
+import org.w3c.dom.BroadcastChannel
+import org.w3c.dom.MessageEvent
+import org.w3c.dom.events.EventTarget
 import parts.fileListPane.ModelState.*
 import parts.spinner
 import parts.titleBar.titleBar
@@ -76,6 +79,14 @@ fun RenderContext.fileListPane(
         }
     }
 
+    val channel = BroadcastChannel("FileListPane")
+    channel.addEventListener("message", { event ->
+        val messageEvent = event as MessageEvent
+        if ((messageEvent.data as String)== "reload" && userName != null) {
+            update(Message.Load(userName))
+        }
+    })
+
     // ここからスタート
     if (userName != null) {
         update(Message.Load(userName))
@@ -85,7 +96,7 @@ fun RenderContext.fileListPane(
         titleBar(
             leftDivContent = {
                 button(buttonClass) {
-                    disabled(modelStore.data.map { it.state is Init  })
+                    disabled(modelStore.data.map { it.state is Init })
                     modelStore.data.render { model ->
                         if (model.state is Loading) {
                             spinner()
@@ -119,11 +130,19 @@ fun RenderContext.fileListPane(
                                         } else {
                                             i("bi bi-file-earmark-text mr-1") {}
                                             if (entry == model.selected) {
-                                                classList(listOf<String>("hover:bg-gray-200 bg-gray-300 " +
-                                                        "dark:bg-gray-700  dark:hover:bg-gray-500"))
+                                                classList(
+                                                    listOf<String>(
+                                                        "hover:bg-gray-200 bg-gray-300 " +
+                                                                "dark:bg-gray-700  dark:hover:bg-gray-500"
+                                                    )
+                                                )
                                             } else {
-                                                classList(listOf<String>("hover:bg-gray-200 dark:hover:bg-gray-500 " +
-                                                        "active:bg-gray-300 dark:active:bg-gray-700"))
+                                                classList(
+                                                    listOf<String>(
+                                                        "hover:bg-gray-200 dark:hover:bg-gray-500 " +
+                                                                "active:bg-gray-300 dark:active:bg-gray-700"
+                                                    )
+                                                )
                                             }
                                             clicks handledBy { update(Message.Select(entry)) }
                                         }
