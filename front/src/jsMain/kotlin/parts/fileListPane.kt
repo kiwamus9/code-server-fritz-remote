@@ -43,7 +43,7 @@ fun RenderContext.fileListPane(
 
     val modelStore = object : RootStore<Model>(Model(Init, emptyList()), job = Job()) {
         val load = handle<String> { _, name ->
-            val workspace = http("/codeServer2/data/workspace/user").acceptJson().contentType("application/json")
+            val workspace = http("/soft_prac/codeServer2/data/workspace/user").acceptJson().contentType("application/json")
             val resp = workspace.get(name)
             if (resp.ok && (resp.status != 404)) {
                 //console.log(resp.body())

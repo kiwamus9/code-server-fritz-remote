@@ -33,10 +33,10 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 
 // routing
-app.use('/codeServer2', indexRouter);
-app.use('/codeServer2/data', dataRouter);
+app.use('/soft_prac/codeServer2', indexRouter);
+app.use('/soft_prac/codeServer2/data', dataRouter);
 //svelte root
-app.use("/codeServer2/body", express.static(path.join(__dirname, 'body')))
+app.use("/soft_prac/codeServer2/body", express.static(path.join(__dirname, 'body')))
 
 
 // catch 404 and forward to error handler

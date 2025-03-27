@@ -9,12 +9,12 @@ export default {
     server: {
         cors: false,
         proxy: {
-            "/codeServer2/data": {
+            "/soft_prac/codeServer2/data": {
                 target: "http://localhost:3001",
                 changeOrigin: true,
                 secure: false,
             },
-            "/codeServer2/ws": {
+            "/soft_prac/codeServer2/ws": {
                 target: "ws://localhost:3001",
                 rewriteWsOrigin: true,
                 secure: false,

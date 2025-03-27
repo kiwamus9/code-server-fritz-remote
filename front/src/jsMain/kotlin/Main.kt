@@ -28,7 +28,7 @@ fun main() {
     render("#target") {
         main("flex") {
             resizableCol(
-                initialUpperHeight = "600px",
+                initialUpperHeight = "60%",
                 upperDivContent = {
                     editorPane(
                         userName = userName,
