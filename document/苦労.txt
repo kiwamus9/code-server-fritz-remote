@@ -13,6 +13,7 @@ https://telehakke.github.io/tailwindcss-japanese-cheat-sheet-v4/
 4.
 viteBuildでbackendのbodyにコピーできない．．
 手動で，front/build/vite/distの下をbackend/bodyにコピー
+!!!linuxリモートだとうまくコピーするぞ！！！
 
 5.
 tsxのままでデプロイしていいような気がする
