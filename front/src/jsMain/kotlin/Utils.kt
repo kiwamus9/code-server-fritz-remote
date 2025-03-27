@@ -64,4 +64,4 @@ val enterButtonClass = (buttonColorDef + "rounded-r-lg").joinToString(
     separator = " ",
     postfix = " ", prefix = " "
 )
-const val inputTextClass = "border border-gray-300 dark:border-gray-600 ps-1"
+const val inputTextClass = "text-sm border border-gray-300 dark:border-gray-600 ps-1"

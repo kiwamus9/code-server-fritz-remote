@@ -9,7 +9,7 @@ const darkModeTheme = {background: "black", foreground: "white", cursor: "white"
 const lightModeTheme = {background: "white", foreground: "black", cursor: "black"};
 
 let options = {
-    cursorBlink: true, fontSize: 14,
+    cursorBlink: true, fontSize: 13,
     lineHeight: 1.2, theme: darkModeTheme
 }
 

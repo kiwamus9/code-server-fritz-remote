@@ -13,7 +13,11 @@ https://telehakke.github.io/tailwindcss-japanese-cheat-sheet-v4/
 4.
 viteBuildでbackendのbodyにコピーできない．．
 手動で，front/build/vite/distの下をbackend/bodyにコピー
-!!!linuxリモートだとうまくコピーするぞ！！！
+いや，違う気がする．．．!!!linuxリモートだとうまくコピーするぞ！！！
+コンソールで ./gradlew viteBuildでないと作らない気がするvite/dist直下
 
 5.
 tsxのままでデプロイしていいような気がする
+
+
+docker build -f Dockerfile_codeServerF2 -t code-server-f2 .
