@@ -24,7 +24,7 @@ repositories {
 }
 
 vite {
-    base.set("/codeServer2/body")
+    base.set("/soft_prac/codeServer2/body")
     build {
         outDir.set(layout.projectDirectory.dir("../backend/body"))
     }

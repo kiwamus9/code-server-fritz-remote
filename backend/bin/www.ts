@@ -8,7 +8,7 @@ import {app, io , httpServer} from '../app'
 import Debug from 'debug'
 
 const debug = Debug('app')
-const HOSTNAME = 'localhost'
+//const HOSTNAME = 'localhost'
 /**
  * Get port from environment and store in Express.
  */
@@ -26,7 +26,7 @@ app.set('port', port);
  * Listen on provided port, on all network interfaces.
  */
 
-io.attach(httpServer, {path: "/codeServer2/ws/"});
+io.attach(httpServer, {path: "/soft_prac/codeServer2/ws/"});
 httpServer.listen(port);
 httpServer.on('error', onError);
 httpServer.on('listening', onListening);

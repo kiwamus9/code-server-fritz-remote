@@ -48,7 +48,7 @@ fun RenderContext.editorPane(
     fileStore: SelectedFileStore, darkStore: DarkModeStore
 ) {
     val modelStore = object : RootStore<Model>(Model(ModelState.Init, ""), job = Job()) {
-        val workspace = http("/codeServer2/data/workspace/file/v2").accept("text/plain").contentType("text/plain")
+        val workspace = http("/soft_prac/codeServer2/data/workspace/file/v2").accept("text/plain").contentType("text/plain")
         val load = handle<String> { oldModel, userPath ->
             val resp = workspace.get("?userFullPathName=$userPath")
             if (resp.ok && (resp.status != 404)) {
@@ -78,7 +78,7 @@ fun RenderContext.editorPane(
                 if (modelStore.current.state is ModelState.Loaded) {
                     val userSavePath = userName + "/" + fileStore.current!!.fullPathName()
                     val saveContent = editorView!!.state.doc
-                    val workspace = http("/codeServer2/data/workspace/file/v2").acceptJson()
+                    val workspace = http("/soft_prac/codeServer2/data/workspace/file/v2").acceptJson()
                         .contentType("application/json")
                     val resp = workspace.body(JSON.stringify(saveContent.toJSON())).put("?userFullPathName=$userSavePath")
                     if (!resp.ok or (resp.status != 200)) {

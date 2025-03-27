@@ -2,7 +2,7 @@ import {Terminal} from '@xterm/xterm'
 import {FitAddon} from '@xterm/addon-fit'
 import {io} from "socket.io-client"
 
-let socket = io({path: "/codeServer2/ws/"})
+let socket = io({path: "/soft_prac/codeServer2/ws/"})
 
 
 const darkModeTheme = {background: "black", foreground: "white", cursor: "white"};

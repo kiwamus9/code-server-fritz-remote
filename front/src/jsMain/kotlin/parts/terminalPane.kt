@@ -64,7 +64,7 @@ fun RenderContext.terminalPane(
 ) {
     // 選択ファイルが変わった時にターミナルをクリアする
     fileStore.data.handledBy { fileEntry ->
-        if((fileEntry != null) && (terminalDynamic != null)) {
+        if ((fileEntry != null) && (terminalDynamic != null)) {
             clearTerminal()
         }
     }
@@ -146,7 +146,6 @@ fun RenderContext.terminalPane(
                             )
                         }
                     }
-
                     observer = ResizeObserver { entries, _ ->
                         resizeTerminal()
                     }
