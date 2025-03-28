@@ -6,7 +6,6 @@ import DarkModeStore
 import FileEntry
 import SelectedFileStore
 import buttonClass
-import commandLineCheckBoxClass
 import dev.fritz2.core.RenderContext
 import dev.fritz2.core.afterMount
 import dev.fritz2.core.autocomplete
@@ -28,10 +27,8 @@ import inputTextClass
 import kotlinx.browser.document
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.get
 import parts.titleBar.titleBar
 import pasteButtonClass
-import kotlin.math.log
 
 const val numberOfPasteArea = 2
 const val numberOfCommandLineArea = 2
