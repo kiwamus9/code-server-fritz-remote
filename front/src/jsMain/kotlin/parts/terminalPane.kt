@@ -27,6 +27,7 @@ import inputTextClass
 import kotlinx.browser.document
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLInputElement
+import parts.generateCommand
 import parts.titleBar.titleBar
 import pasteButtonClass
 
@@ -48,29 +49,10 @@ fun commandLineParam(numberOf: Int): String {
     }
 }
 
-
-fun generateCommand(workSpacePath: String, fileEntry: FileEntry): String {
-    val lastComma = fileEntry.name.lastIndexOf(".")
-    if (lastComma == -1) return ""
-
-    val name = fileEntry.name.substring(0, lastComma)
-    val ext = fileEntry.name.substring(lastComma + 1).lowercase()
-    val commandLineParam = commandLineParam(numberOfCommandLineArea)
-
-    return when (ext) {
-        "c" -> ("cd $workSpacePath/${fileEntry.path} " +
-                "&& cc *.c -lm -o $name " +
-                "&& ./$name $commandLineParam\n")
-        "java" -> ("cd $workSpacePath/${fileEntry.path} " +
-                "&& javac *.java " +
-                "&& java $name $commandLineParam\n")
-        else -> ""
-    }
-}
-
 fun buildAndRun(workSpacePath: String, fileEntry: FileEntry) {
+    val commandLineParam = commandLineParam(numberOfPasteArea)
     if (terminalDynamic != null) {
-        pasteTerminal(generateCommand(workSpacePath, fileEntry))
+        pasteTerminal(generateCommand(workSpacePath, fileEntry, commandLineParam))
     }
 }
 

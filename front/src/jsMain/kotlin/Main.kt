@@ -40,7 +40,7 @@ fun main() {
                 lowerDivContent = {
                     resizableRow(
                         baseClass = "bg-inherit",
-                        initialLeftWidth = "200px",
+                        initialLeftWidth = "25%",
                         leftDivContent = { fileListPane(userName = userName, fileStore = SelectedFileStore) },
                         rightDicContent = {
                             terminalPane(
