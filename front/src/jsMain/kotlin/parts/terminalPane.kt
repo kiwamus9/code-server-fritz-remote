@@ -37,28 +37,33 @@ var terminalDynamic: dynamic? = null
 var observer: ResizeObserver? = null
 
 
+fun commandLineParam(numberOf: Int): String {
+    return (1..numberOf).fold("") { str, index ->
+        val check = document.getElementById("commandLine${index}-check")
+        val textArea = document.getElementById("commandLine${index}-input")
+
+        if (check.unsafeCast<HTMLInputElement>().checked) {
+            str + " ${textArea.unsafeCast<HTMLInputElement>().value} "
+        } else str
+    }
+}
+
+
 fun generateCommand(workSpacePath: String, fileEntry: FileEntry): String {
     val lastComma = fileEntry.name.lastIndexOf(".")
     if (lastComma == -1) return ""
 
     val name = fileEntry.name.substring(0, lastComma)
     val ext = fileEntry.name.substring(lastComma + 1).lowercase()
-
-    val commandParam = buildList<String> {
-        (1..numberOfCommandLineArea) .forEach {
-            if(document.getElementById("commandLine${it}-check").unsafeCast< HTMLInputElement>().value == "checked") {
-                console.log("cc",document.getElementById("commandLine${it}-check").unsafeCast< HTMLInputElement>().value)
-                add("una")
-            }
-            add("how")
-        }
-    }
-
-    console.log(commandParam)
+    val commandLineParam = commandLineParam(numberOfCommandLineArea)
 
     return when (ext) {
-        "c" -> ("cd $workSpacePath/${fileEntry.path} && cc *.c -lm -o $name && ./$name \n")
-        "java" -> ("cd $workSpacePath/${fileEntry.path} && javac *.java && java $name \n")
+        "c" -> ("cd $workSpacePath/${fileEntry.path} " +
+                "&& cc *.c -lm -o $name " +
+                "&& ./$name $commandLineParam\n")
+        "java" -> ("cd $workSpacePath/${fileEntry.path} " +
+                "&& javac *.java " +
+                "&& java $name $commandLineParam\n")
         else -> ""
     }
 }
@@ -115,12 +120,11 @@ fun RenderContext.terminalPane(
                     }
                 }
             },
-            centerDivContent = {},
-            rightDivContent = {
-                div("flex flex-row flex-wrap me-2") {
-                    div {
+            centerDivContent = {
+                div("flex flex-row flex-wrap") {
+                    div("flex flex-col justify-around") {
                         (1..numberOfPasteArea).forEach {
-                            div("flex my-1 rounded-lg shadow-sm") {
+                            div("my-1 rounded-lg") {
                                 button(pasteButtonClass) {
                                     disabled(userName == null)
                                     i("bi bi-clipboard-fill") {}
@@ -146,9 +150,9 @@ fun RenderContext.terminalPane(
                             }
                         }
                     }
-                    div {
+                    div("flex flex-col justify-around") {
                         (1..numberOfCommandLineArea).forEach {
-                            div("my-1 ps-2") {
+                            div("my-1 ps-2 flex flex-col justify-around") {
                                 label("inline-flex items-center cursor-pointer ") {
                                     input("sr-only peer", "commandLine${it}-check") {
                                         type("checkbox")
@@ -156,7 +160,17 @@ fun RenderContext.terminalPane(
                                         checked(false)
                                     }
                                     div(
-                                        "relative w-11 h-6 bg-gray-200 rounded-l-lg border-gray-300 peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"
+                                        "relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4" +
+                                                " peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-s-lg" +
+                                                " peer dark:bg-gray-700 peer-checked:after:translate-x-full" +
+                                                " rtl:peer-checked:after:-translate-x-full" +
+                                                " peer-checked:after:border-white after:content-['']" +
+                                                " after:absolute after:top-[2px] after:start-[2px]" +
+                                                " after:bg-white after:border-gray-300 after:border after:rounded-full" +
+                                                " after:h-4 after:w-4 after:transition-all dark:border-gray-600" +
+                                                " peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600" +
+                                                " outline outline-blue-600"
+
                                     ) {}
                                     input(inputTextClass, "commandLine${it}-input") {
                                         attr("spellcheck", "false") //spellcheck関数自体はあるけれど，HTMLInputElement向けじゃない
@@ -170,7 +184,8 @@ fun RenderContext.terminalPane(
                         }
                     }
                 }
-            }
+            },
+            rightDivContent = {}
         )
         div("grow-1 shrink-1 min-h-[100px] w-[100%] bg-white dark:bg-black", id = "terminalParent") {
             if (userName == null) {
