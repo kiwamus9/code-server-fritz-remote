@@ -84,23 +84,23 @@ io.on('connection', (socket) => {
 
         watcher
             .on('ready', () => {
-                console.log("ready")
+                //console.log("ready")
                 io.to(socket.id).emit('changeFileList', "ready")
             })
             .on('add', (_) => {
-                console.log("add")
+                //console.log("add")
                 io.to(socket.id).emit('changeFileList', "add")
             })
             .on('unlink', (_) => {
-                console.log("unlink")
+                //console.log("unlink")
                 io.to(socket.id).emit('changeFileList', "unlink")
             })
             .on('addDir', (_) => {
-                console.log("addDir")
+                //console.log("addDir")
                 io.to(socket.id).emit('changeFileList', "addDir")
             })
             .on('unlinkDir', (_) => {
-                console.log("unlinkDir")
+                //console.log("unlinkDir")
                 io.to(socket.id).emit('changeFileList', "unlinkDir")
             })
 

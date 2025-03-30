@@ -2,6 +2,7 @@ import dev.fritz2.core.RootStore
 import dev.fritz2.core.render
 import kotlinx.browser.window
 import kotlinx.coroutines.Job
+import org.w3c.dom.BroadcastChannel
 import org.w3c.dom.MediaQueryListEvent
 import org.w3c.dom.url.URL
 import parts.editorPane.editorPane
@@ -18,13 +19,26 @@ object SelectedFileStore : RootStore<FileEntry?>(null, job = Job()) {
 
 object DarkModeStore : RootStore<Boolean>(darkModeMediaQuery.matches, job = Job())
 
+val channel = BroadcastChannel("soft-prac-dark-mode");
+
+
+
 fun main() {
     val userName = URL(window.location.href).searchParams.get("userName")
+    val mode = URL(window.location.href).searchParams.get("mode") ?: "unu"
 
-    darkModeMediaQuery.addEventListener("change", { e ->
-        val ev = e as MediaQueryListEvent
-        DarkModeStore.update(ev.matches)
-    })
+    console.log("mode $mode")
+    channel.addEventListener ("message", {
+            event -> {
+        console.log("sss",event);
+    }
+    });
+
+//    darkModeMediaQuery.addEventListener("change", { e ->
+//        val ev = e as MediaQueryListEvent
+//        DarkModeStore.update(ev.matches)
+//    })
+
     render("#target") {
         main("flex") {
             resizableCol(
