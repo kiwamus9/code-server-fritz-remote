@@ -17,7 +17,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x -o /tmp/nodesource_setup.sh
 RUN bash /tmp/nodesource_setup.sh
 RUN apt-get install nodejs -y
 RUN apt upgrade -y
-RUN npm install -g npm yarn
+RUN npm install -g npm yarn pm2 tsx
 
 COPY backend/ ./backend/
 COPY package.json ./package.json
@@ -27,5 +27,6 @@ RUN yarn install --prod --frozen-lockfile
 EXPOSE 3001
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-#CMD ["sh"]
-CMD ["node_modules/.bin/tsx", "backend/bin/www.ts"]
+# CMD ["sh"]
+# CMD ["node_modules/.bin/tsx", "backend/bin/www.ts"]
+CMD ["pm2-runtime", "start", "--interpreter","tsx" , "backend/bin/www.ts"]

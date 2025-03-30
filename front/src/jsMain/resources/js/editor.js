@@ -5,6 +5,9 @@ import "bootstrap-icons/icons/floppy2-fill.svg"
 import "bootstrap-icons/icons/arrow-clockwise.svg"
 import {coolGlow, tomorrow} from "thememirror"
 import {basicSetup} from "codemirror";
+import { keymap } from "@codemirror/view";
+import { indentWithTab } from "@codemirror/commands";
+
 import {cpp} from "@codemirror/lang-cpp"
 //import {java} from "@codemirror/lang-java"
 
@@ -55,7 +58,8 @@ export function createState(doc) {
             basicSetup,
             listenChangesExtension,
             language.of(cpp()), //javaもこれでいい
-            theme.of(coolGlow) // defaultはdark mode
+            theme.of(coolGlow), // defaultはdark mode
+            keymap.of([indentWithTab]) //タブキーが入力可能
         ] // 拡張機能を追加
     })
 }

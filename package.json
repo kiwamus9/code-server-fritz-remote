@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "start": "./node_modules/.bin/tsx backend/bin/www.ts",
     "back-end-dev": "tsx --watch backend/bin/www.ts",
     "back-end-pro": "tsx backend/bin/www.ts",
     "dev": "vite",
