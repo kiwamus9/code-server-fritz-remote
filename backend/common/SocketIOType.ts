@@ -6,6 +6,7 @@ type TerminalSizeType = {
 
 export type ServerToClientEvents = {
     tty: (message: string) => void;
+    changeFileList: (userName: string) => void;
 };
 
 /**

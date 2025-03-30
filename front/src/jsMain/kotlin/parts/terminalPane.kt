@@ -174,15 +174,18 @@ fun RenderContext.terminalPane(
                 +"未接続"
             } else {
                 afterMount { withDom, _ ->
-                    terminalDynamic = initTerminal(withDom.domNode as HTMLElement, userName) { reason, id ->
-                        console.log(reason)
-                        if (reason.startsWith("io server disconnect", ignoreCase = true)) {
-                            withDom.domNode.innerHTML = ""
-                            withDom.domNode.prepend(
-                                document.createTextNode(" 複数のウィンドウで同時にターミナルは開けません．")
-                            )
-                        }
-                    }
+                    terminalDynamic = initTerminal(
+                        withDom.domNode as HTMLElement, userName,
+                        { reason, id ->
+                            console.log(reason)
+                            if (reason.startsWith("io server disconnect", ignoreCase = true)) {
+                                withDom.domNode.innerHTML = ""
+                                withDom.domNode.prepend(
+                                    document.createTextNode(" 複数のウィンドウで同時にターミナルは開けません．")
+                                )
+                            }
+                        },
+                        { userName -> console.log(userName)})
                     observer = ResizeObserver { entries, _ ->
                         resizeTerminal()
                     }

@@ -8,10 +8,12 @@ import org.w3c.dom.HTMLElement
 
 external fun initTerminal(terminalParent: HTMLElement,
                           userName: String,
-                          disconnectedFunc:(String, String) -> Unit): dynamic
+                          disconnectedFunc:(String, String) -> Unit,
+                          fileListReloadFunc:(String) -> Unit): dynamic
 external fun resizeTerminal()
 external fun pasteTerminal(text: String)
 external fun clearTerminal()
 external fun focusTerminal()
 external fun toDarkModeTerminal(terminal: dynamic, isDarkMode: Boolean)
-//external fun hoe(ff:(Int) -> Unit)
+external fun setReloadFileListCallBack(func: (data: String) -> Unit)
+external var reloadFileListCallBack: (Unit) -> Unit

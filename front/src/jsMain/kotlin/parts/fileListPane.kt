@@ -11,10 +11,14 @@ import dev.fritz2.core.RootStore
 import dev.fritz2.core.disabled
 import dev.fritz2.remote.decoded
 import dev.fritz2.remote.http
+import external.StateEvent
+import external.reloadFileListCallBack
+import external.setReloadFileListCallBack
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.w3c.dom.BroadcastChannel
+import org.w3c.dom.CustomEvent
 import org.w3c.dom.MessageEvent
 import parts.fileListPane.ModelState.*
 import parts.spinner
@@ -78,20 +82,28 @@ fun RenderContext.fileListPane(
         }
     }
 
-    val channel = BroadcastChannel("FileListPane")
-    channel.addEventListener("message", { event ->
-        val messageEvent = event as MessageEvent
-        if ((messageEvent.data as String)== "reload" && userName != null) {
+//    val channel = BroadcastChannel("FileListPane")
+//    channel.addEventListener("message", { event ->
+//        val messageEvent = event as MessageEvent
+//        if ((messageEvent.data as String)== "reload" && userName != null) {
+//            update(Message.Load(userName))
+//        }
+//    })
+
+    // terminal経由でwatcherがファイル変更を見張っている
+    setReloadFileListCallBack{
+        if (userName != null) {
             update(Message.Load(userName))
         }
-    })
+    }
 
     // ここからスタート
     if (userName != null) {
         update(Message.Load(userName))
     }
 
-    div("flex flex-col h-full w-full bg-red-300") {
+    div("flex flex-col h-full w-full bg-red-300",id) {
+
         titleBar(
             leftDivContent = {
                 button(buttonClass) {

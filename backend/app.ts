@@ -11,6 +11,7 @@ import pty from "node-pty"
 import indexRouter from './routes/index'
 import dataRouter from './routes/data'
 import type {ClientToServerEvents, ServerToClientEvents} from "./common/SocketIOType";
+import chokidar from 'chokidar';
 
 //express server
 export const app = express()
@@ -37,7 +38,6 @@ app.use("/soft_prac/codeServer2/body", express.static(path.join(__dirname, 'body
 // routing
 app.use('/soft_prac/codeServer2/', indexRouter);
 app.use('/soft_prac/codeServer2/data', dataRouter);
-
 
 
 // catch 404 and forward to error handler
@@ -77,7 +77,36 @@ io.on('connection', (socket) => {
             cwd: process.env.HOME,
             env: process.env,
         });
+        console.log("watch", __workspaces + "/" + param.userName)
+        let watcher = chokidar.watch(__workspaces + "/" + param.userName,
+            {ignored: /[\/\\]\./})
+
+
+        watcher
+            .on('ready', () => {
+                console.log("ready")
+                io.to(socket.id).emit('changeFileList', "ready")
+            })
+            .on('add', (_) => {
+                console.log("add")
+                io.to(socket.id).emit('changeFileList', "add")
+            })
+            .on('unlink', (_) => {
+                console.log("unlink")
+                io.to(socket.id).emit('changeFileList', "unlink")
+            })
+            .on('addDir', (_) => {
+                console.log("addDir")
+                io.to(socket.id).emit('changeFileList', "addDir")
+            })
+            .on('unlinkDir', (_) => {
+                console.log("unlinkDir")
+                io.to(socket.id).emit('changeFileList', "unlinkDir")
+            })
+
+
         socket.data["ptyProcess"] = ptyProcess
+        socket.data["watcher"] = watcher
         ptyProcess.onData((data) => {
             io.to(socket.id).emit('tty', data)
         })
@@ -93,8 +122,9 @@ io.on('connection', (socket) => {
         console.log('user disconnected')
         const sockets = await io.fetchSockets()
         sockets.forEach((socket) => {
-            console.log("u",socket.data["userName"], "p", socket.data["ptyProcess"]._pid, "id", socket.id)
+            console.log("u", socket.data["userName"], "p", socket.data["ptyProcess"]._pid, "id", socket.id)
         })
+        socket.data["watcher"]?.close()
         socket.data["ptyProcess"]?.kill("SIGKILL")
         // console.dir(ptyProcess)
     })

@@ -2,8 +2,9 @@ import {Terminal} from '@xterm/xterm'
 import {FitAddon} from '@xterm/addon-fit'
 import {io} from "socket.io-client"
 
-let socket = io({path: "/soft_prac/codeServer2/ws/"})
-
+let socket
+let socketID
+let userName
 
 const darkModeTheme = {background: "black", foreground: "white", cursor: "white"};
 const lightModeTheme = {background: "white", foreground: "black", cursor: "black"};
@@ -13,15 +14,21 @@ let options = {
     lineHeight: 1.2, theme: darkModeTheme
 }
 
+export let reloadFileListCallBack
+
 let terminal = new Terminal(options)
 export let fitAddon = new FitAddon()
 
-let userName = "kiwamu"
-let socketID
 
 // noinspection JSUnusedGlobalSymbols :kotlinから呼び出す
-export function initTerminal(terminalParent, userName, disconnectedFunc) {
+export function initTerminal(terminalParent, user_name,
+                             disconnectedFunc,
+                             fileListReloadFunc) {
     // window.addEventListener('resize', resize)
+
+    userName = user_name
+    socket = io({path: "/soft_prac/codeServer2/ws/"})
+    let isReadyToWatchFile = false
     terminal.loadAddon(fitAddon)
     terminal.open(terminalParent);
     terminal.resize(10, 10)
@@ -39,11 +46,19 @@ export function initTerminal(terminalParent, userName, disconnectedFunc) {
 
     socket?.on('disconnect', (reason) => {
         disconnectedFunc(reason, socketID)
+        isReadyToWatchFile = false
         console.log('socket disconnect', new Date())
     })
 
     socket?.on('tty', (data) => {
         terminal.write(data)
+    })
+
+    socket?.on('changeFileList', (data) => {
+        if (data === "ready") isReadyToWatchFile = true
+        if (isReadyToWatchFile && (reloadFileListCallBack !== undefined)) {
+            reloadFileListCallBack(data)
+        }
     })
 
     terminal.onData((data) => {
@@ -89,3 +104,9 @@ export function toDarkModeTerminal(terminal, isDarkMode) {
 
     }
 }
+
+// noinspection JSUnusedGlobalSymbols :kotlinから呼び出す
+export function setReloadFileListCallBack(func) {
+    reloadFileListCallBack = func
+}
+
