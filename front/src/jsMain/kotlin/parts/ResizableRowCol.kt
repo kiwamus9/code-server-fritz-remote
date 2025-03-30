@@ -157,7 +157,7 @@ fun RenderContext.resizableColRow(
             }
         }
         content1Pane =
-            div("dark:border-zinc-600 border-zinc-400  shrink-0 ${setting.divBaseClass1 ?: ""}") {
+            div("dark:border-zinc-600 border-zinc-300  shrink-0 ${setting.divBaseClass1 ?: ""}") {
                 inlineStyle(setting.borderStyle + setting.initFlexBasis)
 //            div("dark:border-zinc-600 border-zinc-200 border-b-4") {
                 (setting.divContent1)()

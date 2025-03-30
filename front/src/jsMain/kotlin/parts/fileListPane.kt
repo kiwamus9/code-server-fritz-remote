@@ -124,7 +124,7 @@ fun RenderContext.fileListPane(
             centerDivContent = {},
             rightDivContent = {}
         )
-        div("grow dark:bg-black bg-white text-sm pl-1 pt-1 overflow-auto") {
+        div("grow dark:text-white text-black dark:bg-black bg-white text-sm pl-1 pt-1 overflow-auto") {
             modelStore.data.render(into = this) { model ->
                 when (model.state) {
                     is Init -> +"未接続"
