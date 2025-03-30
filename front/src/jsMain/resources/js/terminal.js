@@ -22,8 +22,7 @@ export let fitAddon = new FitAddon()
 
 // noinspection JSUnusedGlobalSymbols :kotlinから呼び出す
 export function initTerminal(terminalParent, user_name,
-                             disconnectedFunc,
-                             fileListReloadFunc) {
+                             disconnectedFunc) {
     // window.addEventListener('resize', resize)
 
     userName = user_name
