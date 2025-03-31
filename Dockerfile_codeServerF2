@@ -11,7 +11,7 @@ ENV LANGUAGE=ja_JP:ja
 ENV PS1="softPrac %d %% "
 
 RUN apt-get update
-RUN apt-get install -y curl make less gcc g++ default-jdk dumb-init zsh
+RUN apt-get install -y curl make less gcc g++ openjdk-21-jdk dumb-init zsh
 
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x -o /tmp/nodesource_setup.sh
 RUN bash /tmp/nodesource_setup.sh
