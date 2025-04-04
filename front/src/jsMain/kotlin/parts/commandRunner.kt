@@ -14,15 +14,35 @@ fun generateCommand(workSpacePath: String, fileEntry: FileEntry, commandLinePara
     var realName = name
     val pathElems = fileEntry.path.split("/")
     val indexOfSrc = pathElems.indexOf("src")
-    if (indexOfSrc != -1) { // src contain
-        realPath = pathElems.take(indexOfSrc + 1).joinToString("/")
-        if (pathElems.drop(indexOfSrc + 1).isNotEmpty()) {
-            realName =
-                pathElems.drop(indexOfSrc + 1).joinToString("/", postfix = "/") + realName
+    var javaRealName = name
+    var javaClassPath = "."
+    var javaRealClass = name
+
+    if (ext == "c") {
+        if (indexOfSrc != -1) { // src contain
+            realPath = pathElems.take(indexOfSrc + 1).joinToString("/")
+            if (pathElems.drop(indexOfSrc + 1).isNotEmpty()) {
+                realName =
+                    pathElems.drop(indexOfSrc + 1).joinToString("/", postfix = "/") + realName
+            }
         }
-    } else if ((pathElems.size >= 2) && (ext == "java")) {
+    } else if (ext == "java") {
         realPath = pathElems.first()
-        realName = pathElems.drop(1).joinToString("/", postfix = "/") + realName
+        if (indexOfSrc == -1) { //パスにsrcが入っていない
+            //javaClassPath = "."
+            //javaRealClass = name
+            if (pathElems.size > 1) { //パッケージがある
+                javaRealName = pathElems.drop(1).joinToString("/", postfix = "/") + realName
+                javaRealClass = pathElems.drop(1).joinToString(".", postfix = ".") + realName
+                console.log("realName", realName)
+                console.log("javaRealClass", javaRealClass)
+            }
+        } else { //パスにsrcが入っている
+            javaClassPath = "src"
+            javaRealName = pathElems.drop(indexOfSrc).joinToString("/", postfix = "/") + realName
+            val javaRealClassPrefix = pathElems.drop(indexOfSrc + 1).joinToString(".", postfix = ".")
+            javaRealClass = if (javaRealClassPrefix == ".") realName else javaRealClassPrefix + realName
+        }
     }
 
     /*
@@ -31,10 +51,10 @@ fun generateCommand(workSpacePath: String, fileEntry: FileEntry, commandLinePara
     a/src/main.c -> "a/src", "main.c"
     a/src/a/main.c -> "a/src, "a/main.c
 
-    a/main.java -> "a","main.java"
-    a/b/main.java -> "a","b/main.java" // Java only
-    a/src/main.java -> "a/src", "main.java"
-    a/src/a/main.java -> "a/src, "a/main.java
+    a/main.java -> "a", "." ,"main.java", "main"
+    a/b/main.java -> "a",".", "b/main.java", "b.main" // Java only
+    a/src/main.java -> "a", "src", "src/main.java", "main"
+    a/src/b/main.java -> "a", "src", "src/b/main.java", "b.main"
      */
 
 //    console.log(fileEntry)
@@ -45,13 +65,9 @@ fun generateCommand(workSpacePath: String, fileEntry: FileEntry, commandLinePara
                 "&& cc *.c -lm -o $name " +
                 "&& ./$realName $commandLineParam\n")
 
-        "java" -> {
-            val realNameByComma = realName.replace("/", ".")
-            ("cd $workSpacePath/$realPath " +
-                    "&& javac $realName.java " +
-                    "&& java $realNameByComma $commandLineParam\n")
-        }
-
+        "java" -> ("cd $workSpacePath/$realPath " +
+                "&& javac -cp $javaClassPath $javaRealName.java " +
+                "&& java -cp $javaClassPath $javaRealClass $commandLineParam\n")
         else -> ""
     }
 }
