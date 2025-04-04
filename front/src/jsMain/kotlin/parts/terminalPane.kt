@@ -69,6 +69,9 @@ fun RenderContext.terminalPane(
         if ((fileEntry != null) && (terminalDynamic != null)) {
             clearTerminal()
         }
+        if(fileEntry == null) {
+            clearTerminal()
+        }
     }
     //　ダークモード
     darkStore.data.handledBy { isDarkMode ->

@@ -94,7 +94,6 @@ fun RenderContext.fileListPane(
     setReloadFileListCallBack{
         if (userName != null) {
             update(Message.Load(userName))
-            fileStore.update(null)
         }
     }
 

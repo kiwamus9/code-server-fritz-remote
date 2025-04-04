@@ -10,10 +10,10 @@
 </iframe>
 
 <script>
-    const bc = new BroadcastChannel("FileListPane")
+    const bc = new BroadcastChannel("soft-prac-report-change")
     const rButton = document.getElementById("reload")
     rButton.onclick = function () {
-        bc.postMessage("reload")
+        bc.postMessage("change")
     }
 </script>
 </body>

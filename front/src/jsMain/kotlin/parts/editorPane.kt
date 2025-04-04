@@ -97,6 +97,10 @@ fun RenderContext.editorPane(
     fileStore.data.handledBy { fileEntry ->
         fileEntry?.let {
             if (userName != null) update(Message.Load(userName + "/" + it.fullPathName()))
+        } ?: run{
+            editorView?.let {
+                updateEditorView(it, "")
+            }
         }
     }
 

@@ -26,8 +26,18 @@ object SelectedFileStore : RootStore<FileEntry?>(null, job = Job()) {
 
 object DarkModeStore : RootStore<Boolean>(darkModeMediaQuery.matches, job = Job())
 
-val channel = BroadcastChannel("soft-prac-dark-mode");
+val channel = BroadcastChannel("soft-prac-dark-mode")
+val channelReportChange = BroadcastChannel("soft-prac-report-change");
 
+/*
+    val channel = BroadcastChannel("FileListPane")
+    channel.addEventListener("message", { event ->
+        val messageEvent = event as MessageEvent
+        if ((messageEvent.data as String)== "reload" && userName != null) {
+            update(Message.Load(userName))
+        }
+    })
+ */
 
 fun main() {
 
@@ -37,10 +47,19 @@ fun main() {
     }
     val darkModeStore = DarkModeStore
 
+    // ダークモード
     darkModeStore.update(mode == "dark")
     channel.addEventListener("message", { ev ->
         val event = ev.unsafeCast<MessageEvent>()
         DarkModeStore.update((event.data as String) == "dark")
+    })
+
+    // 選択している課題が変わったとき
+    channelReportChange.addEventListener("message", { event ->
+        val messageEvent = event as MessageEvent
+        if ((messageEvent.data as String)== "change") {
+            SelectedFileStore.update(null)
+        }
     })
 
     render("#target") {
