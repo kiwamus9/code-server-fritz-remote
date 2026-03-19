@@ -1,5 +1,6 @@
 //import DarkModeStore.handledBy
 
+import dev.fritz2.core.EmittingHandler
 import dev.fritz2.core.RootStore
 import dev.fritz2.core.render
 import kotlinx.browser.document
@@ -18,27 +19,22 @@ import parts.resizableRowCol.resizableRow
 import parts.terminalPane.terminalPane
 
 
-
 val darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
 
-object SelectedFileStore : RootStore<FileEntry?>(null, job = Job()) {
+val globalJob = Job()
+
+object SelectedFileStore : RootStore<FileEntry?>(null, globalJob) {
     var workspaces: String? = null
+    val updateAndEmit: EmittingHandler<FileEntry?, FileEntry?> = handleAndEmit { _, new ->
+        emit(new)
+        new
+    }
 }
 
-object DarkModeStore : RootStore<Boolean>(darkModeMediaQuery.matches, job = Job())
+object DarkModeStore : RootStore<Boolean>(darkModeMediaQuery.matches, globalJob)
 
 val channel = BroadcastChannel("soft-prac-dark-mode")
-val channelReportChange = BroadcastChannel("soft-prac-report-change");
-
-/*
-    val channel = BroadcastChannel("FileListPane")
-    channel.addEventListener("message", { event ->
-        val messageEvent = event as MessageEvent
-        if ((messageEvent.data as String)== "reload" && userName != null) {
-            update(Message.Load(userName))
-        }
-    })
- */
+val channelReportChange = BroadcastChannel("soft-prac-report-change")
 
 fun main() {
 
@@ -58,8 +54,8 @@ fun main() {
     // 選択している課題が変わったとき
     channelReportChange.addEventListener("message", { event ->
         val messageEvent = event as MessageEvent
-        if ((messageEvent.data as String)== "change") {
-            SelectedFileStore.update(null)
+        if ((messageEvent.data as String) == "change") {
+            SelectedFileStore.updateAndEmit(null)
         }
     })
 
@@ -81,7 +77,6 @@ fun main() {
                         darkStore = DarkModeStore
                     )
                 },
-
                 lowerDivContent = {
                     resizableRow(
                         baseClass = "bg-inherit",
@@ -95,7 +90,8 @@ fun main() {
                             )
                         }
                     )
-                })
+                }
+            )
         }
     }
 }

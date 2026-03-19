@@ -49,7 +49,7 @@ fun RenderContext.editorPane(
 ) {
     val modelStore = object : RootStore<Model>(Model(ModelState.Init, ""), job = Job()) {
         val workspace = http("/soft_prac/codeServer2/data/workspace/file/v2").accept("text/plain").contentType("text/plain")
-        val load = handle<String> { oldModel, userPath ->
+        val load = handle<String> { _, userPath ->
             val resp = workspace.get("?userFullPathName=$userPath")
             if (resp.ok && (resp.status != 404)) {
                 Model(ModelState.Loaded(resp.body()), "")
@@ -61,10 +61,16 @@ fun RenderContext.editorPane(
                 )
             }
         }
+
+        init {
+            SelectedFileStore.updateAndEmit handledBy {
+                this.update(Model(ModelState.Init, ""))
+            }
+        }
     }
 
     // Model内で表現してたけど，editorPaneが初期化されてエディタのカーソル位置が飛ぶのでやめた
-    var isChangeFlow = MutableStateFlow(false)
+    val isChangeFlow = MutableStateFlow(false)
 
 
     suspend fun update(msg: Message) {
