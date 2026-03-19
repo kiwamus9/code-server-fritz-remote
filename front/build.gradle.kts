@@ -47,7 +47,9 @@ kotlin {
         }
         jsMain {
             dependencies {
-
+                implementation(libs.fritz2.core)
+                implementation(libs.kotlinx.serialization.json)
+                implementation(libs.fritz2.serialization)
 
 //                implementation(npm("@codemirror/state", "6.4.1"))
 //                implementation(npm("@codemirror/view", "6.35.0"))

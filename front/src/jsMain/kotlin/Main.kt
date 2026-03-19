@@ -1,15 +1,14 @@
-import DarkModeStore.handledBy
+//import DarkModeStore.handledBy
+
 import dev.fritz2.core.RootStore
 import dev.fritz2.core.render
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.dom.addClass
 import kotlinx.dom.removeClass
 import org.w3c.dom.BroadcastChannel
 import org.w3c.dom.HTMLHtmlElement
-import org.w3c.dom.MediaQueryListEvent
 import org.w3c.dom.MessageEvent
 import org.w3c.dom.url.URL
 import parts.editorPane.editorPane
@@ -17,6 +16,8 @@ import parts.fileListPane.fileListPane
 import parts.resizableRowCol.resizableCol
 import parts.resizableRowCol.resizableRow
 import parts.terminalPane.terminalPane
+
+
 
 val darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
 

@@ -1,5 +1,5 @@
 import {Terminal} from '@xterm/xterm'
-import {FitAddon} from '@xterm/addon-fit'
+import {FitAddon} from "@xterm/addon-fit/src/FitAddon.ts";
 import {io} from "socket.io-client"
 
 let socket
