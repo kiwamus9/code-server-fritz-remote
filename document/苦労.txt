@@ -2,6 +2,7 @@
 vite.configのpluginでtailwind（4．0）を入れてもうまく動かないので
 postcssを使用する
 
+
 2．
 vite-kotolinのconfigが全然足りないので，vite.config.templ.jsを
 必要な場所にコピーするんだけど．
