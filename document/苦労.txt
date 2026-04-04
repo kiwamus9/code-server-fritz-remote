@@ -20,5 +20,5 @@ viteBuildでbackendのbodyにコピーできない．．
 5.
 tsxのままでデプロイしていいような気がする
 
-
-docker build -f Dockerfile_codeServerF2 -t code-server-f2 .
+!!Macの場合dockerDesktopでDokcerHubにLoginすること！！
+docker build -f Dockerfile_codeServerF2 -t code-server-f3 .
